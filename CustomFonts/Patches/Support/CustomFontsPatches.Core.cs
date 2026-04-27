@@ -211,7 +211,7 @@ public partial class CustomFonts
 				return false;
 			var worldLu = TryGetPropertyValueAcrossInheritance(ReadMemberValue(workerLike, "World"), "LocalUser");
 			if (worldLu == null)
-				return true;
+				return false;
 			var compLu = TryGetPropertyValueAcrossInheritance(workerLike, "LocalUser");
 			if (compLu != null)
 				return ReferenceEquals(compLu, worldLu);

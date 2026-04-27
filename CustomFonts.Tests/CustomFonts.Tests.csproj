@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CustomFonts.csproj" />
+  </ItemGroup>
+
+  <!-- Detect Resonite installation for runtime dependencies -->
+  <PropertyGroup>
+    <_ResonitePath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Resonite')">$(HOME)/.steam/steam/steamapps/common/Resonite</_ResonitePath>
+    <_ResonitePath Condition="'$(_ResonitePath)' == '' and Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite')">C:/Program Files (x86)/Steam/steamapps/common/Resonite</_ResonitePath>
+  </PropertyGroup>
+
+  <!-- Copy required Resonite DLLs to test output so the mod assembly can load its dependencies -->
+  <Target Name="CopyResoniteDlls" AfterTargets="Build" Condition="'$(_ResonitePath)' != ''">
+    <ItemGroup>
+      <_ResoniteDlls Include="$(_ResonitePath)/Libraries/ResoniteModLoader.dll" />
+      <_ResoniteDlls Include="$(_ResonitePath)/rml_libs/0Harmony.dll" />
+      <_ResoniteDlls Include="$(_ResonitePath)/Elements.Core.dll" />
+      <_ResoniteDlls Include="$(_ResonitePath)/FrooxEngine.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ResoniteDlls)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

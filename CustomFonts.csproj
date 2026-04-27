@@ -62,6 +62,7 @@
 		<Compile Remove=".examples/**" />
 		<Compile Remove="decomp/**" />
 		<Compile Remove=".decomp/**" />
+		<Compile Remove="CustomFonts.Tests/**" />
 		<None Include=".examples/**" />
 		<None Include="decomp/**" />
 		<None Include=".decomp/**" />

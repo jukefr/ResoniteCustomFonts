@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 
@@ -15,21 +14,14 @@ public partial class CustomFonts
 			private static bool Prepare()
 			{
 				var t = AccessTools.TypeByName("FrooxEngine.RefEditor");
-				return t != null
-					&& t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Any(m => m.Name == "Setup");
+				return t != null && FindDeclaredInstanceMethod(t, "Setup") != null;
 			}
 
-			[HarmonyTargetMethods]
-			private static IEnumerable<MethodInfo> TargetMethods()
+			[HarmonyTargetMethod]
+			private static MethodInfo? TargetMethod()
 			{
 				var t = AccessTools.TypeByName("FrooxEngine.RefEditor");
-				if (t == null)
-					yield break;
-				foreach (var m in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
-				{
-					if (m.Name == "Setup" && m.ReturnType == typeof(void))
-						yield return m;
-				}
+				return t == null ? null : FindDeclaredInstanceMethod(t, "Setup");
 			}
 
 			[HarmonyPrefix]

@@ -151,8 +151,8 @@ public partial class CustomFonts
 				}
 
 				if (CustomFonts.FontLoggingEnabled())
-					CustomFonts.FontLog($"ResolveFont: found tag \"{tag}\" but no FontChain on that slot.");
-				return null;
+					CustomFonts.FontLog($"ResolveFont: found tag \"{tag}\" but no FontChain on that slot — continuing search.");
+				continue;
 			}
 
 			if (CustomFonts.FontLoggingEnabled())
