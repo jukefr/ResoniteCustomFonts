@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Elements.Core</AssemblyName>
+
+    <!--
+      GitHub Actions / local builds sometimes hit an SDK bug during deps generation:
+      "GenerateDepsFile" fails with "An item with the same key has already been added".
+      Since this stub is only used as compile-time reference, we don't need deps generation.
+    -->
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

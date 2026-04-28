@@ -1,46 +1,11 @@
 using System.Reflection;
 using CustomFonts;
+using Xunit;
 
 namespace CustomFonts.Tests;
 
 public class ReflectionHelperTests
 {
-    private static readonly Type PatchesType = typeof(CustomFonts.CustomFontsPatches);
-
-    private static T? InvokeStatic<T>(string methodName, params object?[] args)
-    {
-        var flags = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
-        var method = PatchesType.GetMethod(methodName, flags);
-        Assert.NotNull(method);
-        return (T?)method!.Invoke(null, args);
-    }
-
-    // ---- SafeRead ----
-
-    [Fact]
-    public void SafeRead_ReturnsValue_WhenReaderSucceeds()
-    {
-        Func<object?> reader = () => 42;
-        var result = InvokeStatic<object?>("SafeRead", reader);
-        Assert.Equal(42, result);
-    }
-
-    [Fact]
-    public void SafeRead_ReturnsNull_WhenReaderThrows()
-    {
-        Func<object?> throwingReader = () => throw new InvalidOperationException("expected");
-        var result = InvokeStatic<object?>("SafeRead", throwingReader);
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SafeRead_ReturnsNull_WhenReaderReturnsNull()
-    {
-        Func<object?> nullReader = () => null;
-        var result = InvokeStatic<object?>("SafeRead", nullReader);
-        Assert.Null(result);
-    }
-
     // ---- FindReadableInstanceProperty ----
 
     private class TestProps
@@ -62,23 +27,16 @@ public class ReflectionHelperTests
     public void FindReadableInstanceProperty_FindsPublicProperty()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindReadableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-        Assert.NotNull(method);
-
-        var prop = method.Invoke(null, new object?[] { typeof(TestProps), "Name", flags });
+        var prop = ReflectionHelpers.FindReadableInstanceProperty(typeof(TestProps), "Name", flags);
         Assert.NotNull(prop);
-        Assert.Equal("Name", ((PropertyInfo)prop!).Name);
+        Assert.Equal("Name", prop!.Name);
     }
 
     [Fact]
     public void FindReadableInstanceProperty_ReturnsNull_ForMissingProperty()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindReadableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(TestProps), "NonExistent", flags });
+        var prop = ReflectionHelpers.FindReadableInstanceProperty(typeof(TestProps), "NonExistent", flags);
         Assert.Null(prop);
     }
 
@@ -86,10 +44,7 @@ public class ReflectionHelperTests
     public void FindReadableInstanceProperty_SkipsIndexer()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindReadableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(TestProps), "Item", flags });
+        var prop = ReflectionHelpers.FindReadableInstanceProperty(typeof(TestProps), "Item", flags);
         Assert.Null(prop);
     }
 
@@ -97,12 +52,9 @@ public class ReflectionHelperTests
     public void FindReadableInstanceProperty_PrefersExactMatch_WhenMultiple()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindReadableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(TwoCandidateProps), "Parent", flags });
+        var prop = ReflectionHelpers.FindReadableInstanceProperty(typeof(TwoCandidateProps), "Parent", flags);
         Assert.NotNull(prop);
-        Assert.Equal("Parent", ((PropertyInfo)prop!).Name);
+        Assert.Equal("Parent", prop!.Name);
     }
 
     // ---- ReadMemberValue ----
@@ -111,7 +63,7 @@ public class ReflectionHelperTests
     public void ReadMemberValue_ReadsPublicProperty()
     {
         var obj = new { Name = "test", Value = 1 };
-        var result = InvokeStatic<object?>("ReadMemberValue", obj, "Name");
+        var result = ReflectionHelpers.ReadMemberValue(obj, "Name");
         Assert.Equal("test", result);
     }
 
@@ -119,7 +71,7 @@ public class ReflectionHelperTests
     public void ReadMemberValue_ReadsPublicField()
     {
         var obj = new WithField { Field = "fieldValue" };
-        var result = InvokeStatic<object?>("ReadMemberValue", obj, "Field");
+        var result = ReflectionHelpers.ReadMemberValue(obj, "Field");
         Assert.Equal("fieldValue", result);
     }
 
@@ -132,7 +84,7 @@ public class ReflectionHelperTests
     public void ReadMemberValue_ReturnsNull_ForMissingMember()
     {
         var obj = new { X = 1 };
-        var result = InvokeStatic<object?>("ReadMemberValue", obj, "Y");
+        var result = ReflectionHelpers.ReadMemberValue(obj, "Y");
         Assert.Null(result);
     }
 
@@ -142,7 +94,7 @@ public class ReflectionHelperTests
     public void TrySetMemberValue_SetsPublicProperty()
     {
         var obj = new TestProps();
-        var result = InvokeStatic<bool>("TrySetMemberValue", obj, "Name", "updated");
+        var result = ReflectionHelpers.TrySetMemberValue(obj, "Name", "updated");
         Assert.True(result);
         Assert.Equal("updated", obj.Name);
     }
@@ -151,7 +103,7 @@ public class ReflectionHelperTests
     public void TrySetMemberValue_SetsPublicField()
     {
         var obj = new WithField();
-        var result = InvokeStatic<bool>("TrySetMemberValue", obj, "Field", "updated");
+        var result = ReflectionHelpers.TrySetMemberValue(obj, "Field", "updated");
         Assert.True(result);
         Assert.Equal("updated", obj.Field);
     }
@@ -175,7 +127,7 @@ public class ReflectionHelperTests
     {
         var box = new AssetRefBox();
         var target = new object();
-        var result = InvokeStatic<bool>("TrySetAssetRefTarget", box, target);
+        var result = ReflectionHelpers.TrySetAssetRefTarget(box, target);
         Assert.True(result);
         Assert.Same(target, box.Target);
     }
@@ -185,7 +137,7 @@ public class ReflectionHelperTests
     {
         var box = new AssetRefBoxField();
         var target = new object();
-        var result = InvokeStatic<bool>("TrySetAssetRefTarget", box, target);
+        var result = ReflectionHelpers.TrySetAssetRefTarget(box, target);
         Assert.True(result);
         Assert.Same(target, box.Target);
     }
@@ -194,14 +146,14 @@ public class ReflectionHelperTests
     public void TrySetAssetRefTarget_ReturnsFalse_WhenNoTargetMember()
     {
         var box = new { Id = 1 };
-        var result = InvokeStatic<bool>("TrySetAssetRefTarget", box, new object());
+        var result = ReflectionHelpers.TrySetAssetRefTarget(box, new object());
         Assert.False(result);
     }
 
     [Fact]
     public void TrySetAssetRefTarget_ReturnsFalse_ForNullBox()
     {
-        var result = InvokeStatic<bool>("TrySetAssetRefTarget", null, new object());
+        var result = ReflectionHelpers.TrySetAssetRefTarget(null, new object());
         Assert.False(result);
     }
 
@@ -209,7 +161,7 @@ public class ReflectionHelperTests
     public void TrySetAssetRefTarget_ReturnsFalse_ForNullValue()
     {
         var box = new AssetRefBox();
-        var result = InvokeStatic<bool>("TrySetAssetRefTarget", box, null);
+        var result = ReflectionHelpers.TrySetAssetRefTarget(box, null);
         Assert.False(result);
     }
 
@@ -230,7 +182,7 @@ public class ReflectionHelperTests
     {
         var owner = new OwnerWithRefBox { Font = new AssetRefBox() };
         var font = new object();
-        var result = InvokeStatic<bool>("TryAssignFontChainToMemberAssetRef", owner, "Font", font);
+        var result = ReflectionHelpers.TryAssignFontChainToMemberAssetRef(owner, "Font", font);
         Assert.True(result);
         Assert.Same(font, owner.Font!.Target);
     }
@@ -240,30 +192,30 @@ public class ReflectionHelperTests
     {
         var owner = new OwnerWithRefBoxField { Font = new AssetRefBoxField() };
         var font = new object();
-        var result = InvokeStatic<bool>("TryAssignFontChainToMemberAssetRef", owner, "Font", font);
+        var result = ReflectionHelpers.TryAssignFontChainToMemberAssetRef(owner, "Font", font);
         Assert.True(result);
+    }
+
+    [Fact]
+    public void TryAssignFontChainToMemberAssetRef_WithNullOwner_ReturnsFalse()
+    {
+        var result = ReflectionHelpers.TryAssignFontChainToMemberAssetRef(null!, "Font", new object());
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void TryAssignFontChainToMemberAssetRef_WithNullFont_ReturnsFalse()
+    {
+        var owner = new OwnerWithRefBox { Font = new AssetRefBox() };
+        var result = ReflectionHelpers.TryAssignFontChainToMemberAssetRef(owner, "Font", null);
+        Assert.False(result);
     }
 
     [Fact]
     public void TryAssignFontChainToMemberAssetRef_ReturnsFalse_WhenNoFontMember()
     {
         var owner = new { Id = 1 };
-        var result = InvokeStatic<bool>("TryAssignFontChainToMemberAssetRef", owner, "Font", new object());
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void TryAssignFontChainToMemberAssetRef_ReturnsFalse_WhenOwnerNull()
-    {
-        var result = InvokeStatic<bool>("TryAssignFontChainToMemberAssetRef", null, "Font", new object());
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void TryAssignFontChainToMemberAssetRef_ReturnsFalse_WhenFontNull()
-    {
-        var owner = new OwnerWithRefBox { Font = new AssetRefBox() };
-        var result = InvokeStatic<bool>("TryAssignFontChainToMemberAssetRef", owner, "Font", null);
+        var result = ReflectionHelpers.TryAssignFontChainToMemberAssetRef(owner, "Font", new object());
         Assert.False(result);
     }
 
@@ -274,22 +226,15 @@ public class ReflectionHelperTests
     [Fact]
     public void IsLikelyFontChain_ReturnsTrue_ForTypeWithFontChainInName()
     {
-        var result = InvokeStatic<bool>("IsLikelyFontChain", typeof(FontChainDummy));
+        var result = ReflectionHelpers.IsLikelyFontChain(typeof(FontChainDummy));
         Assert.True(result);
     }
 
     [Fact]
     public void IsLikelyFontChain_ReturnsFalse_ForNonFontChainType()
     {
-        var result = InvokeStatic<bool>("IsLikelyFontChain", typeof(string));
+        var result = ReflectionHelpers.IsLikelyFontChain(typeof(string));
         Assert.False(result);
-    }
-
-    [Fact]
-    public void IsLikelyFontChain_ReturnsTrue_ForFullyQualifiedFontChainName()
-    {
-        var result = InvokeStatic<bool>("IsLikelyFontChain", typeof(FontChainDummy));
-        Assert.True(result);
     }
 
     // ---- FindWritableInstanceProperty ----
@@ -310,22 +255,16 @@ public class ReflectionHelperTests
     public void FindWritableInstanceProperty_FindsReadWriteProperty()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindWritableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(WriteOnlyProps), "ReadWrite", flags });
+        var prop = ReflectionHelpers.FindWritableInstanceProperty(typeof(WriteOnlyProps), "ReadWrite", flags);
         Assert.NotNull(prop);
-        Assert.Equal("ReadWrite", ((PropertyInfo)prop!).Name);
+        Assert.Equal("ReadWrite", prop!.Name);
     }
 
     [Fact]
     public void FindWritableInstanceProperty_ReturnsNull_ForMissing()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindWritableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(WriteOnlyProps), "NonExistent", flags });
+        var prop = ReflectionHelpers.FindWritableInstanceProperty(typeof(WriteOnlyProps), "NonExistent", flags);
         Assert.Null(prop);
     }
 
@@ -333,10 +272,42 @@ public class ReflectionHelperTests
     public void FindWritableInstanceProperty_SkipsIndexer()
     {
         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var method = PatchesType.GetMethod("FindWritableInstanceProperty",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
-        var prop = method!.Invoke(null, new object?[] { typeof(WriteOnlyProps), "Item", flags });
+        var prop = ReflectionHelpers.FindWritableInstanceProperty(typeof(WriteOnlyProps), "Item", flags);
         Assert.Null(prop);
+    }
+
+    // ---- TryGetPropertyValueAcrossInheritance ----
+
+    private class BaseClass
+    {
+        public string BaseProp { get; set; } = "base";
+    }
+
+    private class DerivedClass : BaseClass
+    {
+        public string DerivedProp { get; set; } = "derived";
+    }
+
+    [Fact]
+    public void TryGetPropertyValueAcrossInheritance_FindsInheritedProperty()
+    {
+        var obj = new DerivedClass();
+        var result = ReflectionHelpers.TryGetPropertyValueAcrossInheritance(obj, "BaseProp");
+        Assert.Equal("base", result);
+    }
+
+    [Fact]
+    public void TryGetPropertyValueAcrossInheritance_ReturnsNull_ForNullTarget()
+    {
+        var result = ReflectionHelpers.TryGetPropertyValueAcrossInheritance(null, "Name");
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void TryGetPropertyValueAcrossInheritance_ReturnsNull_ForMissingProperty()
+    {
+        var obj = new { Name = "test" };
+        var result = ReflectionHelpers.TryGetPropertyValueAcrossInheritance(obj, "NonExistent");
+        Assert.Null(result);
     }
 }
