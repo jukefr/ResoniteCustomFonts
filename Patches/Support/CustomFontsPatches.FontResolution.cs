@@ -101,52 +101,12 @@ public partial class CustomFonts
             var textType = TextType;
             if (textType == null)
                 return;
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            var childrenCount = ReadMemberValue(rootSlot, "ChildrenCount");
-            if (childrenCount is not int cnt || cnt <= 0)
-                return;
-            var indexerType = AccessTools.TypeByName("FrooxEngine.Slot");
-            if (indexerType == null)
-                return;
-            PropertyInfo? childIndexer = null;
-            foreach (var p in indexerType.GetProperties(flags))
+            // Use GetComponentsInChildren<Text>() to find ALL Text components at any depth
+            foreach (var textComp in SlotGraphWalker.EnumerateComponentsInChildrenOfSlot(rootSlot, textType))
             {
-                if (!p.CanRead || p.GetIndexParameters().Length != 1)
-                    continue;
-                if (p.GetIndexParameters()[0].ParameterType != typeof(int))
-                    continue;
-                childIndexer = p;
-                break;
-            }
-            if (childIndexer == null)
-                return;
-
-            for (var i = 0; i < cnt; i++)
-            {
-                var child = SafeRead(() => childIndexer.GetValue(rootSlot, [i]));
-                if (child == null)
-                    continue;
-                // Try GetComponent<Text>() via reflection, then GetComponents(Type) fallback
-                var textComp = GetComponentOnSlot(child, textType);
-                if (textComp == null)
-                {
-                    // Maybe Text is on the child's children
-                    var childCount = ReadMemberValue(child, "ChildrenCount");
-                    if (childCount is int cc && cc > 0)
-                    {
-                        for (var j = 0; j < cc; j++)
-                        {
-                            var grandchild = SafeRead(() => childIndexer.GetValue(child, [j]));
-                            if (grandchild == null)
-                                continue;
-                            textComp = GetComponentOnSlot(grandchild, textType);
-                            if (textComp != null)
-                                break;
-                        }
-                    }
-                }
                 if (textComp == null)
                     continue;
+                // Text.Font is AssetRef<FontSet> — set its .Target to our font
                 if (!TrySetMemberValue(textComp, "Font", font))
                     TryAssignFontChainToMemberAssetRef(textComp, "Font", font);
             }
