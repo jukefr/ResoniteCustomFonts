@@ -147,38 +147,14 @@ public static class FontResolver
         isUnder = false;
         if (slot == null)
             return false;
-        var world = ReflectionHelpers.ReadMemberValue(slot, "World");
-        var worldLu = world == null ? null : ReflectionHelpers.TryGetPropertyValueAcrossInheritance(world, "LocalUser");
-        foreach (var m in slot.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+        // IsUnderLocalUser is a property (not a method) on FrooxEngine.Slot,
+        // so we read it via reflection as a member value
+        var raw = ReflectionHelpers.ReadMemberValue(slot, "IsUnderLocalUser");
+        if (raw is bool b)
         {
-            if (m.Name != "IsUnderLocalUser" || m.ReturnType != typeof(bool))
-                continue;
-            var ps = m.GetParameters();
-            try
-            {
-                if (ps.Length == 0)
-                {
-                    if (ReflectionHelpers.SafeRead(() => m.Invoke(slot, null)) is bool b)
-                    {
-                        isUnder = b;
-                        return true;
-                    }
-                }
-                else if (ps.Length == 1 && worldLu != null && ps[0].ParameterType.IsInstanceOfType(worldLu))
-                {
-                    if (ReflectionHelpers.SafeRead(() => m.Invoke(slot, [worldLu])) is bool b2)
-                    {
-                        isUnder = b2;
-                        return true;
-                    }
-                }
-            }
-            catch
-            {
-                // try next overload
-            }
+            isUnder = b;
+            return true;
         }
-
         return false;
     }
 

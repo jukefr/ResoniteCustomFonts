@@ -105,46 +105,6 @@ public partial class CustomFonts
         internal static bool WorkerBelongsToThisClient(object? workerLike) =>
             FontResolver.WorkerBelongsToThisClient(workerLike);
 
-        private static bool TrySlotIsUnderLocalUser(object? slot, out bool isUnder)
-        {
-            isUnder = false;
-            if (slot == null)
-                return false;
-            var world = ReadMemberValue(slot, "World");
-            var worldLu = world == null ? null : TryGetPropertyValueAcrossInheritance(world, "LocalUser");
-            foreach (var m in slot.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-            {
-                if (m.Name != "IsUnderLocalUser" || m.ReturnType != typeof(bool))
-                    continue;
-                var ps = m.GetParameters();
-                try
-                {
-                    if (ps.Length == 0)
-                    {
-                        if (SafeRead(() => m.Invoke(slot, null)) is bool b)
-                        {
-                            isUnder = b;
-                            return true;
-                        }
-                    }
-                    else if (ps.Length == 1 && worldLu != null && ps[0].ParameterType.IsInstanceOfType(worldLu))
-                    {
-                        if (SafeRead(() => m.Invoke(slot, new[] { worldLu })) is bool b2)
-                        {
-                            isUnder = b2;
-                            return true;
-                        }
-                    }
-                }
-                catch
-                {
-                    // try next overload
-                }
-            }
-
-            return false;
-        }
-
         private static bool SlotOrAncestorsUnderLocalUser(object? slot) =>
             FontResolver.SlotOrAncestorsUnderLocalUser(slot);
     }

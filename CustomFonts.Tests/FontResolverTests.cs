@@ -292,4 +292,44 @@ public class FontResolverTests
         var result = FontResolver.ShouldApplyCustomFontsForUiSlot(slot);
         Assert.True(result);
     }
+
+    [Fact]
+    public void SlotOrAncestorsUnderLocalUser_ReturnsTrue_WhenSlotHasIsUnderLocalUserProperty()
+    {
+        // Slot.IsUnderLocalUser is a property (not a method) — verify our
+        // TrySlotIsUnderLocalUser reads it via ReadMemberValue correctly
+        var slot = new SlotWithIsUnderLocalUser { IsUnderLocalUser = true };
+        var result = FontResolver.SlotOrAncestorsUnderLocalUser(slot);
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void SlotOrAncestorsUnderLocalUser_ReturnsFalse_WhenIsUnderLocalUserIsFalse()
+    {
+        var slot = new SlotWithIsUnderLocalUser { IsUnderLocalUser = false };
+        var result = FontResolver.SlotOrAncestorsUnderLocalUser(slot);
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void SlotOrAncestorsUnderLocalUser_ChecksParentChain()
+    {
+        var parent = new SlotWithIsUnderLocalUser { IsUnderLocalUser = true };
+        var child = new SlotWithIsUnderLocalUser { IsUnderLocalUser = false };
+        // Link via Parent property (reflection-read)
+        typeof(SlotWithIsUnderLocalUser)
+            .GetProperty("Parent")!
+            .SetValue(child, parent);
+
+        var result = FontResolver.SlotOrAncestorsUnderLocalUser(child);
+        Assert.True(result);
+    }
+
+    /// <summary>Fake type whose IsUnderLocalUser is a property (like the real FrooxEngine.Slot).</summary>
+    private class SlotWithIsUnderLocalUser
+    {
+        public bool IsUnderLocalUser { get; set; }
+        public object? Parent { get; set; }
+        public object? World { get; set; }
+    }
 }
