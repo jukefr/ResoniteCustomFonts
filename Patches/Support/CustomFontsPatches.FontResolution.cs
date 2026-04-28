@@ -70,21 +70,39 @@ public partial class CustomFonts
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var slot = GetContextSlotFromUiBuilder(ui);
             if (slot == null)
+            {
+                CustomFonts.FontLog("TryApplyFont: slot is null");
                 return;
+            }
             if (!ShouldApplyCustomFontsForUiSlot(slot))
+            {
+                CustomFonts.FontLog($"TryApplyFont: slot {slot.GetType().Name} not eligible");
                 return;
+            }
             var sourceFont =
                 preferBoldChainWhenBolderStackActive && ShouldUseBoldFontChainInSetupEditorStylePostfix(ui)
                     ? ResolveBoldFontProviderForUiSlot(slot)
                     : ResolveFontProviderForUiSlot(slot);
             if (sourceFont == null)
+            {
+                CustomFonts.FontLog("TryApplyFont: sourceFont is null");
                 return;
+            }
+
+            CustomFonts.FontLog($"TryApplyFont: resolved sourceFont={sourceFont.GetType().Name}#{sourceFont.GetHashCode()}");
+
             var styleProp = uiBuilderType.GetProperty("Style", flags);
             var style = styleProp?.GetValue(ui);
             if (style == null)
+            {
+                CustomFonts.FontLog("TryApplyFont: style is null");
                 return;
+            }
             if (!TrySetMemberValue(style, "Font", sourceFont))
+            {
+                CustomFonts.FontLog("TryApplyFont: TrySetMemberValue Style.Font failed, trying TryAssignFontChainToMemberAssetRef");
                 TryAssignFontChainToMemberAssetRef(style, "Font", sourceFont);
+            }
 
             // Update pre-existing Text components on the builder's slot hierarchy.
             // RadiantUI_Panel.SetupPanel creates the title text BEFORE SetupEditorStyle
@@ -100,15 +118,31 @@ public partial class CustomFonts
                 return;
             var textType = TextType;
             if (textType == null)
+            {
+                CustomFonts.FontLog("TryApplyFontToExistingTexts: Text type not found");
                 return;
+            }
+
+            CustomFonts.FontLog($"TryApplyFontToExistingTexts: scanning slot {rootSlot.GetType().Name}#{rootSlot.GetHashCode()} for Text components");
+
+            var count = 0;
             // Use GetComponentsInChildren<Text>() to find ALL Text components at any depth
             foreach (var textComp in SlotGraphWalker.EnumerateComponentsInChildrenOfSlot(rootSlot, textType))
             {
                 if (textComp == null)
                     continue;
+                count++;
+                CustomFonts.FontLog($"TryApplyFontToExistingTexts: found Text#{textComp.GetHashCode()}, setting Font");
                 // Text.Font is AssetRef<FontSet> — set its .Target to our font
                 if (!TrySetMemberValue(textComp, "Font", font))
+                {
+                    CustomFonts.FontLog($"TryApplyFontToExistingTexts: TrySetMemberValue failed, trying TryAssignFontChainToMemberAssetRef");
                     TryAssignFontChainToMemberAssetRef(textComp, "Font", font);
+                }
+            }
+            if (count == 0)
+            {
+                CustomFonts.FontLog("TryApplyFontToExistingTexts: NO Text components found under this slot");
             }
         }
     }
