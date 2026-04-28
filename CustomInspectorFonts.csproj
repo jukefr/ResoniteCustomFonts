@@ -71,31 +71,31 @@
 	<ItemGroup>
 		<Compile Include="CustomInspectorFonts.cs" />
 		<Compile Include="CustomInspectorFonts.PatchSiteConfig.cs" />
-		<Compile Include="Patches/Support/CustomInspectorFontsPatches.Core.cs" />
-		<Compile Include="Patches/Support/CustomInspectorFontsPatches.FontResolution.cs" />
-		<Compile Include="Patches/Support/CustomInspectorFontsPatches.Reflection.cs" />
-		<Compile Include="Patches/Support/CustomInspectorFontsPatches.SlotGraph.cs" />
-		<Compile Include="Patches/Styling/CustomInspectorFontsPatches.SetupEditorStyle.cs" />
-		<Compile Include="Patches/Styling/CustomInspectorFontsPatches.SceneInspectorOnChanges.cs" />
-		<Compile Include="Patches/Styling/CustomInspectorFontsPatches.SlotInspectorOnChanges.cs" />
-		<Compile Include="Patches/Styling/CustomInspectorFontsPatches.TextRenderHelperGetBolderFont.cs" />
-		<Compile Include="Patches/Styling/CustomInspectorFontsPatches.EnumMemberEditorBuildUI.cs" />
-		<Compile Include="Patches/Compatibility/CustomInspectorFontsPatches.CherryPickCherryPickerCctor.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.Helpers.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.SceneInspectorOnAttach.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.UserInspectorOnAttach.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.UserInspectorItemRebuildUser.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.WorkerInspectorCreate.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.WorkerInspectorBuildUIForComponent.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.InspectorPanelSetup.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.FieldEditorSetup.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.RefEditorSetup.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.TextureRefEditorSetup.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.DelegateEditorSetup.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.ListEditorBuildListItem.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.BagEditorBuildBagItem.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.SyncMemberEditorBuilderBuild.cs" />
-		<Compile Include="Patches/Targeted/CustomInspectorFontsPatches.Targeted.SetupEditorStyleExtras.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.Core.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.FontResolution.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.Reflection.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.SlotGraph.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SetupEditorStyle.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SceneInspectorOnChanges.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SlotInspectorOnChanges.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.TextRenderHelperGetBolderFont.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.EnumMemberEditorBuildUI.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Compatibility.CherryPickCherryPickerCctor.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.Helpers.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SceneInspectorOnAttach.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.UserInspectorOnAttach.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.UserInspectorItemRebuildUser.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.WorkerInspectorCreate.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.WorkerInspectorBuildUIForComponent.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.InspectorPanelSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.FieldEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.RefEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.TextureRefEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.DelegateEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.ListEditorBuildListItem.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.BagEditorBuildBagItem.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SyncMemberEditorBuilderBuild.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SetupEditorStyleExtras.cs" />
 	</ItemGroup>
 
 	<!-- Reference / vendored mods — not part of this assembly -->
