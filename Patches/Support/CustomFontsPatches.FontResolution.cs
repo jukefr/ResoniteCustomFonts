@@ -125,24 +125,79 @@ public partial class CustomFonts
 
             CustomFonts.FontLog($"TryApplyFontToExistingTexts: scanning slot {rootSlot.GetType().Name}#{rootSlot.GetHashCode()} for Text components");
 
-            var count = 0;
-            // Use GetComponentsInChildren<Text>() to find ALL Text components at any depth
+            var foundAny = false;
+
+            // Try GetComponentsInChildren<Text>() first (finds at any depth)
             foreach (var textComp in SlotGraphWalker.EnumerateComponentsInChildrenOfSlot(rootSlot, textType))
             {
                 if (textComp == null)
                     continue;
-                count++;
-                CustomFonts.FontLog($"TryApplyFontToExistingTexts: found Text#{textComp.GetHashCode()}, setting Font");
-                // Text.Font is AssetRef<FontSet> — set its .Target to our font
-                if (!TrySetMemberValue(textComp, "Font", font))
+                foundAny = true;
+                CustomFonts.FontLog($"TryApplyFontToExistingTexts: found Text#{textComp.GetHashCode()} via GetComponentsInChildren, setting Font");
+                TryAssignFontChainToMemberAssetRef(textComp, "Font", font);
+            }
+
+            // Fallback: walk direct children and try GetComponent<Text>() on each
+            if (!foundAny)
+            {
+                CustomFonts.FontLog("TryApplyFontToExistingTexts: GetComponentsInChildren found nothing, trying direct children fallback");
+                var childrenCount = ReadMemberValue(rootSlot, "ChildrenCount");
+                if (childrenCount is int cnt && cnt > 0)
                 {
-                    CustomFonts.FontLog($"TryApplyFontToExistingTexts: TrySetMemberValue failed, trying TryAssignFontChainToMemberAssetRef");
-                    TryAssignFontChainToMemberAssetRef(textComp, "Font", font);
+                    var indexerType = AccessTools.TypeByName("FrooxEngine.Slot");
+                    if (indexerType != null)
+                    {
+                        PropertyInfo? childIndexer = null;
+                        foreach (var p in indexerType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+                        {
+                            if (!p.CanRead || p.GetIndexParameters().Length != 1)
+                                continue;
+                            if (p.GetIndexParameters()[0].ParameterType != typeof(int))
+                                continue;
+                            childIndexer = p;
+                            break;
+                        }
+                        if (childIndexer != null)
+                        {
+                            for (var i = 0; i < cnt; i++)
+                            {
+                                var child = SafeRead(() => childIndexer.GetValue(rootSlot, [i]));
+                                if (child == null)
+                                    continue;
+                                var textComp = GetComponentOnSlot(child, textType);
+                                if (textComp != null)
+                                {
+                                    foundAny = true;
+                                    CustomFonts.FontLog($"TryApplyFontToExistingTexts: found Text#{textComp.GetHashCode()} via direct child, setting Font");
+                                    TryAssignFontChainToMemberAssetRef(textComp, "Font", font);
+                                }
+                                // Also recurse into this child's children
+                                var grandchildCount = ReadMemberValue(child, "ChildrenCount");
+                                if (grandchildCount is int gc && gc > 0)
+                                {
+                                    for (var j = 0; j < gc; j++)
+                                    {
+                                        var grandchild = SafeRead(() => childIndexer.GetValue(child, [j]));
+                                        if (grandchild == null)
+                                            continue;
+                                        var gcText = GetComponentOnSlot(grandchild, textType);
+                                        if (gcText != null)
+                                        {
+                                            foundAny = true;
+                                            CustomFonts.FontLog($"TryApplyFontToExistingTexts: found Text#{gcText.GetHashCode()} via grandchild, setting Font");
+                                            TryAssignFontChainToMemberAssetRef(gcText, "Font", font);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            if (count == 0)
+
+            if (!foundAny)
             {
-                CustomFonts.FontLog("TryApplyFontToExistingTexts: NO Text components found under this slot");
+                CustomFonts.FontLog("TryApplyFontToExistingTexts: NO Text components found under this slot (any method)");
             }
         }
     }

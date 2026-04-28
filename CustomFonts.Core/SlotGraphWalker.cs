@@ -299,7 +299,26 @@ public static class SlotGraphWalker
             yield break;
         }
 
-        var list = ReflectionHelpers.SafeRead(() => constructed.Invoke(rootSlot, [null, false, false, null]));
+        // Try with includeLocal=true first, then false — some panels use local slots
+        object? list = null;
+        try
+        {
+            list = ReflectionHelpers.SafeRead(() => constructed.Invoke(rootSlot, [null, false, true, null]));
+        }
+        catch
+        {
+        }
+        if (list == null)
+        {
+            try
+            {
+                list = ReflectionHelpers.SafeRead(() => constructed.Invoke(rootSlot, [null, false, false, null]));
+            }
+            catch
+            {
+            }
+        }
+
         if (list is not IEnumerable enumerable)
             yield break;
         foreach (var item in enumerable)
