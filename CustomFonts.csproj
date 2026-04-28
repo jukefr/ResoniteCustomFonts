@@ -10,51 +10,92 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>CustomFonts</AssemblyName>
 		<RootNamespace>CustomFonts</RootNamespace>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(ResonitePath)' == ''">
-		<!-- default windows and linux paths, manual fallback if both don't turn up anything -->
 		<ResonitePath Condition="'$(OS)' == 'Windows_NT' and Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite')">C:/Program Files (x86)/Steam/steamapps/common/Resonite</ResonitePath>
-
 		<ResonitePath Condition="'$(OS)' != 'Windows_NT' and Exists('$(HOME)/.steam/steam/steamapps/common/Resonite')">$(HOME)/.steam/steam/steamapps/common/Resonite</ResonitePath>
-
 		<ResonitePath Condition="'$(ResonitePath)' == ''">G:\SteamLibrary\steamapps\common\Resonite</ResonitePath>
 	</PropertyGroup>
 
-	<!-- path containing managed dlls. for post-split, this is the same as resonite path, but still here just in case -->
-	<PropertyGroup>
-		<ManagedPath>$(ResonitePath)</ManagedPath>
-	</PropertyGroup>
-
+	<!--
+	  References
+	  - Build stubs (Elements.Core, Renderite.Host) locally into stubs/prebuilt
+	  - Use downloaded NuGet DLLs for ResoniteModLoader + HarmonyLib
+	  - Avoid ResonitePath-derived HintPaths entirely
+	-->
 	<ItemGroup>
+		<Reference Include="Elements.Core">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Elements.Core.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Renderite.Host">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Renderite.Host.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
 		<Reference Include="ResoniteModLoader">
-			<HintPath>$(ResonitePath)/Libraries/ResoniteModLoader.dll</HintPath>
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Libraries/ResoniteModLoader.dll</HintPath>
 			<Private>false</Private>
 		</Reference>
 		<Reference Include="HarmonyLib">
-			<HintPath>$(ResonitePath)/rml_libs/0Harmony.dll</HintPath>
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/rml_libs/0Harmony.dll</HintPath>
 			<Private>false</Private>
 		</Reference>
-		<Reference Include="Elements.Core">
-			<HintPath>$(ResonitePath)/Elements.Core.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
+	</ItemGroup>
+
+	<!-- Build required stub assemblies into stubs/prebuilt -->
+	<Target Name="BuildStubs" BeforeTargets="PrepareForBuild">
+		<PropertyGroup>
+			<_StubOutDir>$(MSBuildProjectDirectory)/stubs/prebuilt</_StubOutDir>
+		</PropertyGroup>
+		<MakeDir Directories="$(_StubOutDir)" />
+		<MakeDir Directories="$(_StubOutDir)/Libraries" />
+		<MakeDir Directories="$(_StubOutDir)/rml_libs" />
+		<Exec Command='dotnet build "stubs/Elements.Core/Elements.Core.csproj" -c $(Configuration) -o "$(_StubOutDir)"' />
+		<Exec Command='dotnet build "stubs/Renderite.Host/Renderite.Host.csproj" -c $(Configuration) -o "$(_StubOutDir)"' />
+	</Target>
+
+	<Target Name="BootstrapOpenSourceDeps" BeforeTargets="BuildStubs">
+		<Exec Command='pwsh -NoProfile -ExecutionPolicy Bypass -File "$(MSBuildProjectDirectory)/tools/bootstrap-deps.ps1"' />
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="CustomFonts.Core/CustomFonts.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ResoniteReference Include="Renderite.Host"/>
-		<Reference Include="@(ResoniteReference)">
-			<Name>%(ResoniteReference.Identity)</Name>
-			<HintPath Condition="'%(HintPath)' == '' And Exists('$(ManagedPath)/%(Identity).dll')">$(ManagedPath)/%(Identity).dll</HintPath>
-			<HintPath Condition="'%(HintPath)' == '' And Exists('$(ManagedPath)/%(Identity).exe')">$(ManagedPath)/%(Identity).exe</HintPath>
-			<Private>false</Private>
-		</Reference>
+		<PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="All" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug' and Exists('$(ResonitePath)/rml_libs/ResoniteHotReloadLib.dll')">
-		<Reference Include="ResoniteHotReloadLib">
-			<HintPath>$(ResonitePath)/rml_libs/ResoniteHotReloadLib.dll</HintPath>
-		</Reference>
+	<ItemGroup>
+		<Compile Include="CustomFonts.cs" />
+		<Compile Include="CustomFonts.PatchSiteConfig.cs" />
+		<Compile Include="Patches/Support/CustomFontsPatches.Core.cs" />
+		<Compile Include="Patches/Support/CustomFontsPatches.FontResolution.cs" />
+		<Compile Include="Patches/Support/CustomFontsPatches.Reflection.cs" />
+		<Compile Include="Patches/Support/CustomFontsPatches.SlotGraph.cs" />
+		<Compile Include="Patches/Styling/CustomFontsPatches.SetupEditorStyle.cs" />
+		<Compile Include="Patches/Styling/CustomFontsPatches.SceneInspectorOnChanges.cs" />
+		<Compile Include="Patches/Styling/CustomFontsPatches.SlotInspectorOnChanges.cs" />
+		<Compile Include="Patches/Styling/CustomFontsPatches.TextRenderHelperGetBolderFont.cs" />
+		<Compile Include="Patches/Styling/CustomFontsPatches.EnumMemberEditorBuildUI.cs" />
+		<Compile Include="Patches/Compatibility/CustomFontsPatches.CherryPickCherryPickerCctor.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.Helpers.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.SceneInspectorOnAttach.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.UserInspectorOnAttach.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.UserInspectorItemRebuildUser.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.WorkerInspectorCreate.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.WorkerInspectorBuildUIForComponent.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.InspectorPanelSetup.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.FieldEditorSetup.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.RefEditorSetup.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.TextureRefEditorSetup.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.DelegateEditorSetup.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.ListEditorBuildListItem.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.BagEditorBuildBagItem.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.SyncMemberEditorBuilderBuild.cs" />
+		<Compile Include="Patches/Targeted/CustomFontsPatches.Targeted.SetupEditorStyleExtras.cs" />
 	</ItemGroup>
 
 	<!-- Reference / vendored mods — not part of this assembly -->
@@ -62,6 +103,7 @@
 		<Compile Remove=".examples/**" />
 		<Compile Remove="decomp/**" />
 		<Compile Remove=".decomp/**" />
+		<Compile Remove="CustomFonts.Tests/**" />
 		<None Include=".examples/**" />
 		<None Include="decomp/**" />
 		<None Include=".decomp/**" />
