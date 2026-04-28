@@ -50,9 +50,20 @@ public partial class CustomFonts
                 }
             }
 
+            /// <summary>
+            /// MyInspectors and other mods may call <c>OnChanges</c> via reflection from coroutines
+            /// where the SceneInspector is not fully initialized, throwing NRE inside the combined
+            /// Harmony wrapper. We suppress the exception (return true) so it doesn't cascade back
+            /// into MyInspectors' coroutine and spam the log — no functional impact from the NRE.
+            /// </summary>
             [HarmonyFinalizer]
-            private static void Finalizer(ref bool __state)
+            private static bool Finalizer(Exception __exception, ref bool __state)
             {
+                if (__exception != null)
+                {
+                    UniLog.Log("[CustomFonts] SceneInspector.OnChanges suppressed: " + __exception.GetType().Name + ": " + __exception.Message, false);
+                }
+
                 try
                 {
                     TryPopInspectorBolderFontOverride(ref __state);
@@ -61,6 +72,8 @@ public partial class CustomFonts
                 {
                     UniLog.Log("[CustomFonts] SceneInspector.OnChanges Finalizer: " + ex, false);
                 }
+
+                return true; // suppress exception — original OnChanges failure is non-fatal
             }
         }
     }
