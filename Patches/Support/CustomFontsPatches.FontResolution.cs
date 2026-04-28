@@ -98,6 +98,7 @@ public partial class CustomFonts
                 CustomFonts.FontLog("TryApplyFont: style is null");
                 return;
             }
+            CustomFonts.FontLog($"TryApplyFont: setting Style.Font on uiBuilder#{ui.GetHashCode()} slot={slot.GetType().Name}#{slot.GetHashCode()}");
             if (!TrySetMemberValue(style, "Font", sourceFont))
             {
                 CustomFonts.FontLog("TryApplyFont: TrySetMemberValue Style.Font failed, trying TryAssignFontChainToMemberAssetRef");

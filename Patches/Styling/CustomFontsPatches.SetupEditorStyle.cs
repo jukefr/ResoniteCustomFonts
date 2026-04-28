@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using ResoniteModLoader;
@@ -9,6 +10,45 @@ public partial class CustomFonts
 {
     public static partial class CustomFontsPatches
     {
+        /// <summary>
+        /// Set custom font on every new UIBuilder at construction time. This is the most comprehensive
+        /// approach — every UIBuilder created anywhere gets our font set on its initial style, which
+        /// means ALL subsequent elements created with that builder use our font, including titles,
+        /// slot bars, headers, etc. Non-inspector UIs are skipped by <c>ShouldApplyCustomFontsForUiSlot</c>.
+        /// </summary>
+        [HarmonyPatch]
+        private static class UiBuilderConstructorPatch
+        {
+            [HarmonyTargetMethod]
+            private static MethodBase? TargetMethod()
+            {
+                var uiBuilderType = UiBuilderType;
+                if (uiBuilderType == null)
+                    return null;
+                // Patch the main constructor (UIBuilder(Slot root, Slot forceNext = null))
+                // which all other constructors delegate to
+                return uiBuilderType.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+                    .OrderByDescending(c => c.GetParameters().Length)
+                    .FirstOrDefault();
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPriority(int.MaxValue)]
+            private static void Postfix(object __instance)
+            {
+                try
+                {
+                    if (!CustomFonts.ActiveEnabled())
+                        return;
+                    TryApplyFontToUiBuilder(__instance, preferBoldChainWhenBolderStackActive: false);
+                }
+                catch (Exception ex)
+                {
+                    Warn($"UIBuilder ctor postfix: {ex.GetType().Name}: {ex.Message}");
+                }
+            }
+        }
+
         /// <summary>
         /// Set custom font early — before any elements are created — so that titles and other
         /// pre-<c>SetupEditorStyle</c> elements (like the title in <c>RadiantUI_Panel.SetupPanel</c>)
