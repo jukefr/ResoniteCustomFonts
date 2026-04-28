@@ -61,7 +61,7 @@
 	</Target>
 
 	<ItemGroup>
-		<ProjectReference Include="CustomFonts.Core/CustomFonts.Core.csproj" />
+		<ProjectReference Include="CustomInspectorFonts.Core/CustomInspectorFonts.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -103,7 +103,7 @@
 		<Compile Remove=".examples/**" />
 		<Compile Remove="decomp/**" />
 		<Compile Remove=".decomp/**" />
-		<Compile Remove="CustomFonts.Tests/**" />
+		<Compile Remove="CustomInspectorFonts.Tests/**" />
 		<None Include=".examples/**" />
 		<None Include="decomp/**" />
 		<None Include=".decomp/**" />

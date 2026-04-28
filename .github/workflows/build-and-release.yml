@@ -30,18 +30,18 @@ jobs:
         dotnet-quality: 'preview'
 
     - name: Restore dependencies
-      run: dotnet restore CustomFonts.csproj
+      run: dotnet restore CustomInspectorFonts.csproj
 
     - name: Build
-      run: dotnet build CustomFonts.csproj --configuration Release --no-restore
+      run: dotnet build CustomInspectorFonts.csproj --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test CustomFonts.Tests --configuration Release --no-restore
+      run: dotnet test CustomInspectorFonts.Tests --configuration Release --no-restore
 
     - name: Get version from csproj
       id: get_version
       run: |
-        VERSION=$(grep -oP '<Version>\K[^<]+' CustomFonts.csproj)
+        VERSION=$(grep -oP '<Version>\K[^<]+' CustomInspectorFonts.csproj)
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"
 

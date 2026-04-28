@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../CustomFonts.Core/CustomFonts.Core.csproj" />
+    <ProjectReference Include="../CustomInspectorFonts.Core/CustomInspectorFonts.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
