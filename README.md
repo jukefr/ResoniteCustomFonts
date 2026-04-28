@@ -1,162 +1,85 @@
-# CustomFonts (Resonite)
+# CustomFonts
 
-Use custom FontChain components on your user avatar for the inspector UI instead of the default Radiant UI fonts. Supports separate regular and bold font faces, with per-area config toggles.
+Change the font used in Resonite's inspector panels and developer UI to whatever you want.
 
-**Repository**: [https://github.com/Kayt/ResoniteCustomFonts](https://github.com/Kayt/ResoniteCustomFonts)
+Instead of the default Radiant UI font, you can use **any FontChain component** on your avatar. Set up one slot for regular text and another for bold text — the mod handles the rest.
 
-## Usage (avatar setup)
+## Quick start
 
-1. Under **`World.LocalUser.Root.Slot`** (your user root / avatar hierarchy), create one or two slots whose **`Slot.Tag`** string matches the mod config (see **General** below).
-2. On each tagged slot, add a **`FontChain`** (and wire fonts as you normally would in Resonite).
-3. **Primary** tag (`fontSlotTag`, default `Kayt.CustomFonts`): used for normal inspector **`UIBuilder.Style.Font`** after `SetupEditorStyle` and similar paths.
-4. **Bold** tag (`boldFontSlotTag`, default same as primary): used when the game asks for **`GetBolderFont`** / bolder stack scopes (e.g. the line in `RadiantUI_Constants.SetupEditorStyle` that sets style font from `GetBolderFont`). Use a **second** tag (e.g. `Kayt.CustomFontsBold`) and a second slot + **FontChain** if you want a different face for "bolder" inspector text.
-5. If `boldFontSlotTag` is **blank** in config, it follows **`fontSlotTag`** (same chain for both). Whitespace-only is treated as "follow primary".
+1. **Install** — drop `CustomFonts.dll` into `Resonite/rml_mods/`
+2. **In-game** — open Mod Settings → CustomFonts and turn it on (it's on by default)
+3. **On your avatar** — create a slot under your user root with `Slot.Tag` set to `Kayt.CustomFonts`, put a `FontChain` on it, and wire your fonts
+4. **Done** — open any inspector, it should now use your font
 
-The mod does **not** pull FontChain from the inspector hierarchy; resolution is **tag + local user avatar** only. Harmony limits **where** fonts apply (inspector panels, worker inspector, component selector, `LocalUserSpace`, etc.); see code `ShouldApplyCustomFontsForUiSlot`.
+## Avatar setup (step by step)
 
-## Configuration (Mod Settings)
+1. In your world, open your avatar's hierarchy and find `World.LocalUser.Root.Slot` (it's the top of your avatar)
+2. Create a new slot somewhere under it (doesn't matter where)
+3. Set that slot's **Tag** to `Kayt.CustomFonts` (or whatever you set in config)
+4. Add a **FontChain** component to that slot
+5. Wire your fonts into the FontChain like you normally would
 
-In-game labels are **short** on purpose (Resonite truncates long descriptions). This section is the full reference.
+That's it. Open any inspector panel — it should now use your font.
+
+### Optional: separate bold font
+
+If you want a different font for bold text (headers, labels, etc.):
+
+1. Create a **second slot** (same as above)
+2. Set its **Tag** to something different, like `Kayt.CustomFontsBold`
+3. Add a FontChain with your bold font
+4. In Mod Settings, set `boldFontSlotTag` to `Kayt.CustomFontsBold`
+
+If you don't set a separate bold tag, the mod uses the same font for both regular and bold text.
+
+## Mod Settings
+
+Open ResoniteModLoader's Mod Settings (usually in your main menu) and find CustomFonts.
 
 ### General
 
-| Key | Meaning |
-|-----|--------|
-| **active** | Master switch. When off, no patches / font logic run. |
-| **fontLogging** | When on, emits extra `[CustomFonts]` lines to the client log (verbose; useful once, then turn off). |
-| **fontSlotTag** | Exact **`Slot.Tag`** string to search for under your user root. First matching descendant with a **FontChain** wins for **normal** UI font. Default `Kayt.CustomFonts`. Empty/whitespace in config falls back to that default. |
-| **boldFontSlotTag** | Same idea for **bolder** font resolution. Default in code matches primary; set e.g. `Kayt.CustomFontsBold` for a second slot + FontChain. Blank = use whatever `fontSlotTag` resolves to. |
+| Setting | What it does |
+|---------|-------------|
+| **active** | Master on/off switch. Turn off to disable the whole mod without removing it. |
+| **fontLogging** | Prints extra info to your log file. Only turn this on if you're troubleshooting. |
+| **fontSlotTag** | The `Slot.Tag` the mod looks for on your avatar to find your regular FontChain. Default: `Kayt.CustomFonts` |
+| **boldFontSlotTag** | The `Slot.Tag` for your bold FontChain. Leave blank to use the same font for both. |
 
-### Inspector — main window
+### What gets custom fonts
 
-Harmony **bolder stack** entry points for the big inspector window (scene / hierarchy / shell).
+Each of these toggles controls whether a specific part of the UI gets your font. They're all ON by default. Turn something off if it causes issues with another mod.
 
-| Key | Patched area |
-|-----|----------------|
-| **styleSceneInspectorOnAttach** | First time you open inspect / scene inspector attach. |
-| **styleSceneInspectorOnChanges** | Refreshes from edits, undo, hierarchy changes, etc. |
-| **styleSlotInspectorOnChanges** | Left slot tree / hierarchy list. |
-| **styleInspectorPanelSetup** | `InspectorPanel.Setup` — outer shell, tabs, shared layout. |
+| Toggle | Controls font in... |
+|--------|-------------------|
+| **Inspector main window** | The big inspector panel (scene hierarchy, slot list) |
+| **Worker inspector** | Component panels, detached inspector windows |
+| **Users list** | The floating user list |
+| **Field editors** | Number fields, text fields, reference pickers, lists, etc. |
+| **Developer tools** | Export dialog, attach component, wizards, ProtoFlux node visuals, etc. |
+| **Global font pipeline** | The main styling system and bold font handling |
+| **CherryPick fix** | Fixes a crash in the CherryPick mod's Attach Component window |
 
-### Worker inspector
+Most people can leave everything on. The per-area toggles exist in case another mod conflicts with a specific area.
 
-| Key | Patched area |
-|-----|----------------|
-| **styleWorkerInspectorCreate** | Static `WorkerInspector.Create` — opening the worker / component-list panel. |
-| **styleWorkerInspectorBuildUIForComponent** | Per-component inspector body. |
+## How it works (short version)
 
-### Users list
+When Resonite builds an inspector panel, it uses Radiant UI fonts. This mod intercepts that process and swaps in your FontChain instead. It walks your avatar hierarchy looking for a slot with the right tag, finds the FontChain on it, and applies it to the inspector.
 
-| Key | Patched area |
-|-----|----------------|
-| **styleUserInspectorOnAttach** | Session users floating list — open. |
-| **styleUserInspectorItemRebuildUser** | Rows when the list rebuilds. |
+The mod only affects your own inspector — other people's UIs are untouched.
 
-### Field editors
+## Requirements
 
-| Key | Patched area |
-|-----|----------------|
-| **styleSyncMemberEditorBuilder** | `SyncMemberEditorBuilder.Build` — most typed fields; Attach Component field UI uses this too. |
-| **styleFieldEditorSetup** | Generic / boxed field rows. |
-| **styleRefEditorSetup** | Reference fields. |
-| **styleListEditorBuildListItem** | List rows. |
-| **styleTextureRefEditorSetup** | Texture reference fields. |
-| **styleDelegateEditorSetup** | Delegate fields. |
-| **styleBagEditorBuildBagItem** | Dictionary / bag rows. |
+- Resonite (any recent version)
+- [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader) 5.x
 
-### Developer tools and dialogs
+## Installing
 
-Targeted **Prefix/Postfix** around `SetupEditorStyle` (and related) for exporter, attach component, wizards, security dialogs, ProtoFlux node visuals, etc. Each key gates one patch class in `Patches/Targeted/`. Turn off a line if you need to narrow down a conflict with another mod.
-
-| Key | Patched area (short) |
-|-----|------------------------|
-| **styleExportDialogSetup** | `ExportDialog.Setup` |
-| **styleComponentSelectorSetupUi** | `ComponentSelector.SetupUI` |
-| **styleComponentSelectorBuildUi** | `ComponentSelector.BuildUI` |
-| **styleInspectorHelperSetupProxyVisual** | `InspectorHelper.SetupProxyVisual` (static) |
-| **styleDevCreateNewFormOpenCategory** | `DevCreateNewForm.OpenCategory` |
-| **styleWizardFormOnAttach** | `WizardForm.OnAttach` |
-| **styleFolderImportDialogOnAttach** | `FolderImportDialog.OnAttach` |
-| **styleRecordEditFormOpenDialogWindow** | `RecordEditForm.OpenDialogWindow` (static) |
-| **styleHostAccessDialogOnAttach** | `HostAccessDialog.OnAttach` |
-| **styleHyperlinkOpenDialogOnAttach** | `HyperlinkOpenDialog.OnAttach` |
-| **styleBrowserCreateDirectoryDialogOnAttach** | `BrowserCreateDirectoryDialog.OnAttach` |
-| **styleNewWorldDialogOpenDialogWindow** | `NewWorldDialog.OpenDialogWindow` (static) |
-| **styleProtoFluxNodeVisualGenerateVisual** | `ProtoFluxNodeVisual.GenerateVisual` |
-| **styleAssetOptimizationWizardOnAttach** | `AssetOptimizationWizard.OnAttach` |
-| **styleAvatarCreatorOnAttach** | `AvatarCreator.OnAttach` |
-| **styleCubemapCreatorOnAttach** | `CubemapCreator.OnAttach` |
-| **styleReflectionProbeWizardOnAttach** | `ReflectionProbeWizard.OnAttach` |
-| **styleVhacdDialogOnAttach** | `VHACD_Dialog.OnAttach` |
-| **styleWorldLightSourcesWizardOnAttach** | `WorldLightSourcesWizard.OnAttach` |
-| **styleWorldTextRendererWizardOnAttach** | `WorldTextRendererWizard.OnAttach` |
-
-### Global font pipeline
-
-| Key | Meaning |
-|-----|--------|
-| **styleRadiantUiSetupEditorStyle** | Postfix on `RadiantUI_Constants.SetupEditorStyle` — applies avatar FontChain to `UIBuilder` after engine styling (and coordinates primary vs bold slot for `Style.Font`). |
-| **styleTextRenderHelperGetBolderFont** | Postfix on `TextRenderHelper.GetBolderFont` — substitutes stack font when a bolder scope is active. Should stay on with the bolder stack patches. |
-| **styleEnumMemberEditorBuildUI** | Postfix on `EnumMemberEditor.BuildUI` — font pass on enum dropdown UI (no `SetupEditorStyle` inside that method). |
-
-### Other mods
-
-| Key | Meaning |
-|-----|--------|
-| **styleCherryPickCherryPickerCctorFix** | Transpiler on CherryPick's `CherryPicker` static constructor: snapshot `flatten` with `ToList()` so Attach Component does not throw "collection was modified". Needs **reload** if toggled at patch time. |
-
-## Building
-
-```bash
-# Build (auto-builds stubs, auto-fetches NuGet deps)
-dotnet build
-
-# Build and copy to Resonite mods folder
-dotnet build -t:Copy
-
-# Run tests
-dotnet test
-
-# Build for release (embeds deps into single DLL)
-dotnet build --configuration Release
-```
-
-## Building for development (hot reload)
-
-```bash
-dotnet build -p:DefineConstants="DEBUG;RML_HOTRELOAD"
-```
-
-This only does something if `ResoniteHotReloadLib.dll` is present at runtime.
-
-## Development
-
-The project is split into a core library (`CustomFonts.Core`) without Resonite or Harmony dependencies, making it easier to test. Tests are in `CustomFonts.Tests` using xUnit + NSubstitute.
-
-### Project layout
-
-```
-ResoniteCustomFonts/
-├── CustomFonts.Core/              # Core logic, no Resonite dependencies
-│   ├── ReflectionHelpers.cs
-│   ├── SlotGraphWalker.cs
-│   └── FontResolver.cs
-├── CustomFonts.Tests/             # xUnit tests
-├── CustomFonts/                   # Main mod code
-│   ├── CustomFonts.cs
-│   ├── CustomFonts.PatchSiteConfig.cs
-│   └── Patches/
-└── [.csproj / stubs / tools / ...]
-```
-
-### Stubs
-
-The project builds its own stub assemblies for `Elements.Core` and `Renderite.Host` so it can compile without a Resonite installation. These are rebuilt automatically before each build.
+Download `CustomFonts.dll` from [Releases](https://github.com/jukefr/ResoniteCustomFonts/releases) and put it in `Resonite/rml_mods/`. That's it.
 
 ## Limitations
 
-**TexturePackingWizard** and **TextureUnpackingWizard**: the first `SetupEditorStyle` for those UIs runs inside an **`async`** continuation **after** `OnAttach` returns. A Harmony Prefix/Postfix on `OnAttach` cannot wrap that call, so there is **no** dedicated bolder-stack patch for those two; global `SetupEditorStyle` / `SyncMemberEditorBuilder` behavior still applies where relevant.
+**TexturePackingWizard** and **TextureUnpackingWizard** don't get custom bold fonts — their UI is built asynchronously and the mod can't wrap it. The regular font still applies through the global styling system.
 
 ## License
 
-GNU GPL-3.0 - see [LICENSE](LICENSE) for details.
+GNU GPL-3.0 — see [LICENSE](LICENSE) for details.
