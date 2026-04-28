@@ -38,7 +38,7 @@ public static class FontResolver
     private static Type? _cachedUiBuilderType;
 
     internal static Type? UiBuilderType =>
-        _cachedUiBuilderType ??= Type.GetType("FrooxEngine.UIX.UIBuilder");
+        _cachedUiBuilderType ??= ReflectionHelpers.TypeByName("FrooxEngine.UIX.UIBuilder");
 
     /// <summary>Font source: first <see cref="FrooxEngine.FontChain"/> on a descendant of <see cref="FrooxEngine.User.Root"/>.<c>Slot</c> whose slot tag matches <paramref name="tag"/>.</summary>
     public static object? ResolveFontProviderForUiSlotWithTag(object slot, string tag, Func<string> fontSourceSlotTag, Func<string> boldFontSourceSlotTag)
@@ -237,7 +237,7 @@ public static class FontResolver
             return WorkerBelongsToThisClient(panel);
 
         // WorkerInspector (e.g. detached component window) has no _hierarchy/_components roots — still an IWorker inspector.
-        var workerInspectorType = Type.GetType("FrooxEngine.WorkerInspector");
+        var workerInspectorType = ReflectionHelpers.TypeByName("FrooxEngine.WorkerInspector");
         if (workerInspectorType != null)
         {
             var wi = SlotGraphWalker.GetComponentInParents(slot, workerInspectorType);
@@ -246,7 +246,7 @@ public static class FontResolver
         }
 
         // Attach Component browser lives under ComponentSelector, not SceneInspector.
-        var componentSelectorType = Type.GetType("FrooxEngine.ComponentSelector");
+        var componentSelectorType = ReflectionHelpers.TypeByName("FrooxEngine.ComponentSelector");
         if (componentSelectorType != null)
         {
             var cs = SlotGraphWalker.GetComponentInParents(slot, componentSelectorType);

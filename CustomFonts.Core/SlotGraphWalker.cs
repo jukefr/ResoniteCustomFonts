@@ -46,7 +46,7 @@ public static class SlotGraphWalker
             && m.GetParameters()[0].ParameterType == typeof(Type));
         if (getComponentsType != null)
         {
-            var fontChainType = Type.GetType("FrooxEngine.FontChain");
+            var fontChainType = ReflectionHelpers.TypeByName("FrooxEngine.FontChain");
             if (fontChainType != null)
             {
                 var arr = ReflectionHelpers.SafeRead(() => getComponentsType.Invoke(slot, [fontChainType]));
@@ -60,7 +60,7 @@ public static class SlotGraphWalker
                 }
             }
 
-            var textType = Type.GetType("FrooxEngine.UIX.Text");
+            var textType = ReflectionHelpers.TypeByName("FrooxEngine.UIX.Text");
             if (textType != null)
             {
                 var arr = ReflectionHelpers.SafeRead(() => getComponentsType.Invoke(slot, [textType]));
@@ -168,7 +168,7 @@ public static class SlotGraphWalker
         {
             if (_slotIntIndexer != null)
                 return _slotIntIndexer;
-            var slotType = Type.GetType("FrooxEngine.Slot");
+            var slotType = ReflectionHelpers.TypeByName("FrooxEngine.Slot");
             if (slotType == null)
                 return null;
             foreach (var p in slotType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))

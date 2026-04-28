@@ -5,6 +5,17 @@ namespace CustomFonts;
 /// <summary>Reflection utilities for reading/writing members across FrooxEngine types at runtime.</summary>
 public static class ReflectionHelpers
 {
+    /// <summary>
+    /// Searches all loaded assemblies for a type by name — equivalent to Harmony's <c>AccessTools.TypeByName</c>
+    /// but without a HarmonyLib dependency. Used in Core (embeddable) instead of <c>Type.GetType()</c> which
+    /// only searches the calling assembly and corelib.
+    /// </summary>
+    public static Type? TypeByName(string fullName)
+    {
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetType(fullName))
+            .FirstOrDefault(t => t != null);
+    }
     /// <summary>Invoke <paramref name="reader"/>; return null on any exception.</summary>
     public static object? SafeRead(Func<object?> reader)
     {
