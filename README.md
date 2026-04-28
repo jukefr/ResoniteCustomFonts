@@ -1,6 +1,6 @@
 # CustomFonts (Resonite)
 
-Inspector and related dev UI can use **FontChain** components on **your user avatar** instead of only the default Radiant UI fonts.
+Use custom FontChain components on your user avatar for the inspector UI instead of the default Radiant UI fonts. Supports separate regular and bold font faces, with per-area config toggles.
 
 **Repository**: [https://github.com/Kayt/ResoniteCustomFonts](https://github.com/Kayt/ResoniteCustomFonts)
 
