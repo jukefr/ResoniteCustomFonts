@@ -1,8 +1,8 @@
 using System.Reflection;
-using CustomFonts;
+using CustomInspectorFonts;
 using Xunit;
 
-namespace CustomFonts.Tests;
+namespace CustomInspectorFonts.Tests;
 
 public class SafeReadTests
 {

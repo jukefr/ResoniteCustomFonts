@@ -1,8 +1,8 @@
 using System.Reflection;
-using CustomFonts;
+using CustomInspectorFonts;
 using Xunit;
 
-namespace CustomFonts.Tests;
+namespace CustomInspectorFonts.Tests;
 
 public class ReflectionHelperTests
 {
@@ -331,7 +331,7 @@ public class ReflectionHelperTests
     [Fact]
     public void TypeByName_FindsTypeInThisAssembly()
     {
-        var result = ReflectionHelpers.TypeByName("CustomFonts.ReflectionHelpers");
+        var result = ReflectionHelpers.TypeByName("CustomInspectorFonts.ReflectionHelpers");
         Assert.NotNull(result);
         Assert.Equal(typeof(ReflectionHelpers), result);
     }

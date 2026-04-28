@@ -2,15 +2,15 @@ using System.Reflection;
 using Elements.Core;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
 /// <see cref="FrooxEngine.SlotInspector.OnChanges"/> calls <see cref="FrooxEngine.RadiantUI_Constants.SetupEditorStyle"/> and UI builders;
 /// the SetupEditorStyle finalizer pops the stack before sibling calls unless we scope the whole <c>OnChanges</c>.
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
         private static class SlotInspectorOnChangesBolderScopePatch
@@ -35,7 +35,7 @@ public partial class CustomFonts
                 __state = false;
                 try
                 {
-                    if (__instance == null || !CustomFonts.PatchSiteEnabled(CustomFonts.StyleSlotInspectorOnChanges))
+                    if (__instance == null || !CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleSlotInspectorOnChanges))
                         return;
                     if (!WorkerBelongsToThisClient(__instance))
                         return;
@@ -43,7 +43,7 @@ public partial class CustomFonts
                 }
                 catch (Exception ex)
                 {
-                    UniLog.Log("[CustomFonts] SlotInspector.OnChanges Prefix: " + ex, false);
+                    UniLog.Log("[CustomInspectorFonts] SlotInspector.OnChanges Prefix: " + ex, false);
                 }
             }
 
@@ -56,7 +56,7 @@ public partial class CustomFonts
                 }
                 catch (Exception ex)
                 {
-                    UniLog.Log("[CustomFonts] SlotInspector.OnChanges Finalizer: " + ex, false);
+                    UniLog.Log("[CustomInspectorFonts] SlotInspector.OnChanges Finalizer: " + ex, false);
                 }
             }
         }

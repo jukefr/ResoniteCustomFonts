@@ -3,15 +3,15 @@ using System.Reflection;
 using HarmonyLib;
 using ResoniteModLoader;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
-/// Patches in this folder push the GetBolderFont stack at inspector UI <em>creation</em> entry points; <see cref="CustomFontsPatches.SetupEditorStylePatch"/> Prefix does not push (style still postfixed).
+/// Patches in this folder push the GetBolderFont stack at inspector UI <em>creation</em> entry points; <see cref="CustomInspectorFontsPatches.SetupEditorStylePatch"/> Prefix does not push (style still postfixed).
 /// See <c>PATCH_TARGETS.txt</c>.
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         private static MethodInfo? FindDeclaredInstanceMethod(Type? type, string name)
         {
@@ -32,7 +32,7 @@ public partial class CustomFonts
         private static void TargetedBolderScopePrefixComponent(object? __instance, ref bool __state, ModConfigurationKey<bool> siteKey)
         {
             __state = false;
-            if (!CustomFonts.PatchSiteEnabled(siteKey))
+            if (!CustomInspectorFonts.PatchSiteEnabled(siteKey))
                 return;
             if (__instance == null)
                 return;
@@ -50,7 +50,7 @@ public partial class CustomFonts
         private static void TargetedBolderScopePrefixFromRootSlot(object? rootSlot, ref bool __state, ModConfigurationKey<bool> siteKey)
         {
             __state = false;
-            if (!CustomFonts.PatchSiteEnabled(siteKey))
+            if (!CustomInspectorFonts.PatchSiteEnabled(siteKey))
                 return;
             if (rootSlot == null || !ShouldApplyCustomFontsForUiSlot(rootSlot))
                 return;

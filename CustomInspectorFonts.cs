@@ -7,20 +7,20 @@ using System.Runtime.CompilerServices;
 using ResoniteHotReloadLib;
 #endif
 
-[assembly: InternalsVisibleTo("CustomFonts.Tests")]
+[assembly: InternalsVisibleTo("CustomInspectorFonts.Tests")]
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>Resonite mod: inspector UI uses <see cref="FrooxEngine.FontChain"/> on your user avatar — primary tag for normal text, optional second tag for bolder (GetBolderFont) via UIBuilder + stack.</summary>
-public partial class CustomFonts : ResoniteMod
+public partial class CustomInspectorFonts : ResoniteMod
 {
     /// <summary>Default <see cref="FontSlotTag"/> when config is empty.</summary>
-    public const string DefaultFontSlotTag = "Kayt.CustomFonts";
+    public const string DefaultFontSlotTag = "Kayt.CustomInspectorFonts";
 
-    public override string Name => "CustomFonts";
+    public override string Name => "CustomInspectorFonts";
     public override string Author => "Kayt";
-    public override string Version => typeof(CustomFonts).Assembly.GetName().Version?.ToString() ?? "0.0.0";
-    public override string Link => "https://github.com/jukefr/ResoniteCustomFonts/";
+    public override string Version => typeof(CustomInspectorFonts).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+    public override string Link => "https://github.com/jukefr/ResoniteCustomInspectorFonts/";
 
     [AutoRegisterConfigKey]
     private static readonly ModConfigurationKey<bool> Active = new(
@@ -31,7 +31,7 @@ public partial class CustomFonts : ResoniteMod
     [AutoRegisterConfigKey]
     private static readonly ModConfigurationKey<bool> FontLogging = new(
         "fontLogging",
-        "Verbose [CustomFonts] lines in the client log.",
+        "Verbose [CustomInspectorFonts] lines in the client log.",
         () => false);
 
     [AutoRegisterConfigKey]
@@ -46,28 +46,28 @@ public partial class CustomFonts : ResoniteMod
         "Slot.Tag under your avatar for bolder GetBolderFont chain.",
         () => DefaultFontSlotTag);
 
-    private static readonly Harmony harmony = new Harmony("org.Kayt.CustomFonts");
+    private static readonly Harmony harmony = new Harmony("org.Kayt.CustomInspectorFonts");
 
     private static ModConfiguration? _config;
 
     /// <summary>Hot reload keeps a reference to the mod instance.</summary>
-    internal static CustomFonts? Instance { get; private set; }
+    internal static CustomInspectorFonts? Instance { get; private set; }
 
     public override void OnEngineInit()
     {
         Instance = this;
-        _config = GetConfiguration() ?? throw new InvalidOperationException("CustomFonts: GetConfiguration() returned null.");
+        _config = GetConfiguration() ?? throw new InvalidOperationException("CustomInspectorFonts: GetConfiguration() returned null.");
         _config.Save(true);
 #if DEBUG && RML_HOTRELOAD
 		HotReloader.RegisterForHotReload(this);
 #endif
-        UniLog.Log("[CustomFonts] applying Harmony patches…", false);
+        UniLog.Log("[CustomInspectorFonts] applying Harmony patches…", false);
         harmony.PatchAll();
         // CherryPick: second Patch pass if the first PatchAll skipped the transpiler (e.g. name/signature drift); idempotent when already patched.
-        CustomFontsPatches.RetryCherryPickStaticCtorTranspilerPatch(harmony);
-        Msg("CustomFonts: targeted inspector creation patches + SetupEditorStyle/EnumMemberEditor style — see PATCH_TARGETS.txt.");
+        CustomInspectorFontsPatches.RetryCherryPickStaticCtorTranspilerPatch(harmony);
+        Msg("CustomInspectorFonts: targeted inspector creation patches + SetupEditorStyle/EnumMemberEditor style — see PATCH_TARGETS.txt.");
         // Always visible in the same stream as other engine lines (second arg = no stack trace).
-        UniLog.Log("[CustomFonts] patches applied. Turn on Mod Settings → CustomFonts → Logging enabled for trace lines.", false);
+        UniLog.Log("[CustomInspectorFonts] patches applied. Turn on Mod Settings → CustomInspectorFonts → Logging enabled for trace lines.", false);
     }
 
     internal static bool ActiveEnabled() =>
@@ -101,7 +101,7 @@ public partial class CustomFonts : ResoniteMod
     {
         if (!FontLoggingEnabled())
             return;
-        var text = "[CustomFonts] " + line;
+        var text = "[CustomInspectorFonts] " + line;
         UniLog.Log(text, false);
         Msg(text);
     }
@@ -114,10 +114,10 @@ public partial class CustomFonts : ResoniteMod
 
 	static void OnHotReload(ResoniteMod modInstance)
 	{
-		Instance = modInstance as CustomFonts;
+		Instance = modInstance as CustomInspectorFonts;
 		_config = Instance?.GetConfiguration();
 		harmony.PatchAll();
-		CustomFontsPatches.RetryCherryPickStaticCtorTranspilerPatch(harmony);
+		CustomInspectorFontsPatches.RetryCherryPickStaticCtorTranspilerPatch(harmony);
 	}
 #endif
 }

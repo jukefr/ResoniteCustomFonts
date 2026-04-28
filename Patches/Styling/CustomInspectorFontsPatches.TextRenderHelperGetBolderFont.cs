@@ -2,11 +2,11 @@ using System.Reflection;
 using HarmonyLib;
 using ResoniteModLoader;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         /// <summary>
         /// Same substitution as <see cref="FrooxEngine.RadiantUI_Constants.SetupEditorStyle"/> for code paths that call
@@ -34,7 +34,7 @@ public partial class CustomFonts
             [HarmonyPriority(int.MaxValue)]
             private static void Postfix([HarmonyArgument(0)] object world, ref object __result)
             {
-                if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleTextRenderHelperGetBolderFont))
+                if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleTextRenderHelperGetBolderFont))
                     return;
                 int depth;
                 object? fontFromStack = null;
@@ -44,9 +44,9 @@ public partial class CustomFonts
                     depth = _inspectorBolderFontStack.Count;
                     if (depth == 0)
                     {
-                        if (CustomFonts.FontLoggingEnabled())
+                        if (CustomInspectorFonts.FontLoggingEnabled())
                         {
-                            CustomFonts.FontLog(
+                            CustomInspectorFonts.FontLog(
                                 $"GetBolderFont: stack empty (no bolder scope) resultType={__result?.GetType().Name ?? "null"}");
                         }
 
@@ -57,9 +57,9 @@ public partial class CustomFonts
                     worldMatches = ReferenceEquals(w, world);
                     if (worldMatches)
                         fontFromStack = font;
-                    else if (CustomFonts.FontLoggingEnabled())
+                    else if (CustomInspectorFonts.FontLoggingEnabled())
                     {
-                        CustomFonts.FontLog(
+                        CustomInspectorFonts.FontLog(
                             $"GetBolderFont: stack has override but World mismatch (stackDepth={depth}) resultType={__result?.GetType().Name ?? "null"}");
                     }
                 }
@@ -67,7 +67,7 @@ public partial class CustomFonts
                 if (fontFromStack != null)
                 {
                     __result = fontFromStack;
-                    CustomFonts.FontLog($"GetBolderFont substituted (world match, stack depth {depth}).");
+                    CustomInspectorFonts.FontLog($"GetBolderFont substituted (world match, stack depth {depth}).");
                 }
             }
         }

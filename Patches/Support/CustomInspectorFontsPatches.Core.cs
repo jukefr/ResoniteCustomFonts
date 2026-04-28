@@ -1,11 +1,11 @@
 using System;
 using System.Reflection;
 using HarmonyLib;
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         private static Type? _cachedUiBuilderType;
 
@@ -29,12 +29,12 @@ public partial class CustomFonts
 
         private static bool TryPushInspectorBolderFontWorldAndFont(object? world, object? slot)
         {
-            if (!CustomFonts.ActiveEnabled())
+            if (!CustomInspectorFonts.ActiveEnabled())
                 return false;
             if (world == null || slot == null)
             {
-                if (CustomFonts.FontLoggingEnabled())
-                    CustomFonts.FontLog($"bolder push skip: worldNull={world == null} slotNull={slot == null}");
+                if (CustomInspectorFonts.FontLoggingEnabled())
+                    CustomInspectorFonts.FontLog($"bolder push skip: worldNull={world == null} slotNull={slot == null}");
                 return false;
             }
 
@@ -44,8 +44,8 @@ public partial class CustomFonts
             var font = FontResolver.ResolveBoldFontProviderForUiSlot(slot, FontSourceSlotTag, BoldFontSourceSlotTag);
             if (font == null)
             {
-                if (CustomFonts.FontLoggingEnabled())
-                    CustomFonts.FontLog($"bolder push skip: ResolveBoldFontProviderForUiSlot null (slot={slot.GetType().Name})");
+                if (CustomInspectorFonts.FontLoggingEnabled())
+                    CustomInspectorFonts.FontLog($"bolder push skip: ResolveBoldFontProviderForUiSlot null (slot={slot.GetType().Name})");
                 return false;
             }
 

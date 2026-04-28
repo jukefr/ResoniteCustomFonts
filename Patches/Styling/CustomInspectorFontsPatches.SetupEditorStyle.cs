@@ -4,11 +4,11 @@ using System.Reflection;
 using HarmonyLib;
 using ResoniteModLoader;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         /// <summary>
         /// Set custom font on every new UIBuilder at construction time. This is the most comprehensive
@@ -38,7 +38,7 @@ public partial class CustomFonts
             {
                 try
                 {
-                    if (!CustomFonts.ActiveEnabled())
+                    if (!CustomInspectorFonts.ActiveEnabled())
                         return;
                     TryApplyFontToUiBuilder(__instance, preferBoldChainWhenBolderStackActive: false);
                 }
@@ -75,7 +75,7 @@ public partial class CustomFonts
             {
                 try
                 {
-                    if (!CustomFonts.ActiveEnabled())
+                    if (!CustomInspectorFonts.ActiveEnabled())
                         return;
                     // Set font early — no bolder stack active here, so use primary font
                     TryApplyFontToUiBuilder(ui, preferBoldChainWhenBolderStackActive: false);
@@ -119,7 +119,7 @@ public partial class CustomFonts
             {
                 try
                 {
-                    if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleRadiantUiSetupEditorStyle))
+                    if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleRadiantUiSetupEditorStyle))
                         return;
                     // Engine sets Style.Font from GetBolderFont first; postfix must not always force primary (clobbers bold slot).
                     // When bolder stack is active, pass true so Style.Font is set from bold-tag FontChain explicitly.

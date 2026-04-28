@@ -2,15 +2,15 @@ using System.Reflection;
 using Elements.Core;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
 /// Most hierarchy/component UI is built or rebuilt from <see cref="FrooxEngine.SceneInspector.OnChanges"/>; the bolder stack
 /// must wrap that path, not only <see cref="FrooxEngine.SceneInspector.OnAttach"/> (stack is already popped after OnAttach returns).
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
         private static class SceneInspectorOnChangesBolderScopePatch
@@ -35,7 +35,7 @@ public partial class CustomFonts
                 __state = false;
                 try
                 {
-                    if (__instance == null || !CustomFonts.PatchSiteEnabled(CustomFonts.StyleSceneInspectorOnChanges))
+                    if (__instance == null || !CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleSceneInspectorOnChanges))
                         return;
                     if (!WorkerBelongsToThisClient(__instance))
                         return;
@@ -46,7 +46,7 @@ public partial class CustomFonts
                 }
                 catch (Exception ex)
                 {
-                    UniLog.Log("[CustomFonts] SceneInspector.OnChanges Prefix: " + ex, false);
+                    UniLog.Log("[CustomInspectorFonts] SceneInspector.OnChanges Prefix: " + ex, false);
                 }
             }
 
@@ -61,7 +61,7 @@ public partial class CustomFonts
             {
                 if (__exception != null)
                 {
-                    UniLog.Log("[CustomFonts] SceneInspector.OnChanges exception (non-fatal): " + __exception.GetType().Name + ": " + __exception.Message, false);
+                    UniLog.Log("[CustomInspectorFonts] SceneInspector.OnChanges exception (non-fatal): " + __exception.GetType().Name + ": " + __exception.Message, false);
                 }
 
                 try
@@ -70,7 +70,7 @@ public partial class CustomFonts
                 }
                 catch (Exception ex)
                 {
-                    UniLog.Log("[CustomFonts] SceneInspector.OnChanges Finalizer: " + ex, false);
+                    UniLog.Log("[CustomInspectorFonts] SceneInspector.OnChanges Finalizer: " + ex, false);
                 }
             }
         }

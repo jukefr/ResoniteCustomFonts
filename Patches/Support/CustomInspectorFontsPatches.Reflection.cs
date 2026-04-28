@@ -1,15 +1,15 @@
 using System;
 using System.Reflection;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
 /// Reflection utilities for reading/writing members across FrooxEngine types at runtime.
-/// These delegate to <see cref="ReflectionHelpers"/> in <c>CustomFonts.Core</c>.
+/// These delegate to <see cref="ReflectionHelpers"/> in <c>CustomInspectorFonts.Core</c>.
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         private static object? SafeRead(Func<object?> reader) =>
             ReflectionHelpers.SafeRead(reader);

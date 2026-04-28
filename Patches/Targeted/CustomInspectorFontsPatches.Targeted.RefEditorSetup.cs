@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
         private static class TargetedRefEditorSetupPatch
@@ -27,7 +27,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleRefEditorSetup);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleRefEditorSetup);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]

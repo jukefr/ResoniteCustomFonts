@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>Reflection utilities for reading/writing members across FrooxEngine types at runtime.</summary>
 public static class ReflectionHelpers

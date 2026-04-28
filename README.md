@@ -1,4 +1,4 @@
-# CustomFonts
+# CustomInspectorFonts
 
 Change the font used in Resonite's inspector panels and developer UI to whatever you want.
 
@@ -6,16 +6,16 @@ Instead of the default Radiant UI font, you can use **any FontChain component** 
 
 ## Quick start
 
-1. **Install** — drop `CustomFonts.dll` into `Resonite/rml_mods/`
-2. **In-game** — open Mod Settings → CustomFonts and turn it on (it's on by default)
-3. **On your avatar** — create a slot under your user root with `Slot.Tag` set to `Kayt.CustomFonts`, put a `FontChain` on it, and wire your fonts
+1. **Install** — drop `CustomInspectorFonts.dll` into `Resonite/rml_mods/`
+2. **In-game** — open Mod Settings → CustomInspectorFonts and turn it on (it's on by default)
+3. **On your avatar** — create a slot under your user root with `Slot.Tag` set to `Kayt.CustomInspectorFonts`, put a `FontChain` on it, and wire your fonts
 4. **Done** — open any inspector, it should now use your font
 
 ## Avatar setup (step by step)
 
 1. In your world, open your avatar's hierarchy and find `World.LocalUser.Root.Slot` (it's the top of your avatar)
 2. Create a new slot somewhere under it (doesn't matter where)
-3. Set that slot's **Tag** to `Kayt.CustomFonts` (or whatever you set in config)
+3. Set that slot's **Tag** to `Kayt.CustomInspectorFonts` (or whatever you set in config)
 4. Add a **FontChain** component to that slot
 5. Wire your fonts into the FontChain like you normally would
 
@@ -26,15 +26,15 @@ That's it. Open any inspector panel — it should now use your font.
 If you want a different font for bold text (headers, labels, etc.):
 
 1. Create a **second slot** (same as above)
-2. Set its **Tag** to something different, like `Kayt.CustomFontsBold`
+2. Set its **Tag** to something different, like `Kayt.CustomInspectorFontsBold`
 3. Add a FontChain with your bold font
-4. In Mod Settings, set `boldFontSlotTag` to `Kayt.CustomFontsBold`
+4. In Mod Settings, set `boldFontSlotTag` to `Kayt.CustomInspectorFontsBold`
 
 If you don't set a separate bold tag, the mod uses the same font for both regular and bold text.
 
 ## Mod Settings
 
-Open ResoniteModLoader's Mod Settings (usually in your main menu) and find CustomFonts.
+Open ResoniteModLoader's Mod Settings (usually in your main menu) and find CustomInspectorFonts.
 
 ### General
 
@@ -42,7 +42,7 @@ Open ResoniteModLoader's Mod Settings (usually in your main menu) and find Custo
 |---------|-------------|
 | **active** | Master on/off switch. Turn off to disable the whole mod without removing it. |
 | **fontLogging** | Prints extra info to your log file. Only turn this on if you're troubleshooting. |
-| **fontSlotTag** | The `Slot.Tag` the mod looks for on your avatar to find your regular FontChain. Default: `Kayt.CustomFonts` |
+| **fontSlotTag** | The `Slot.Tag` the mod looks for on your avatar to find your regular FontChain. Default: `Kayt.CustomInspectorFonts` |
 | **boldFontSlotTag** | The `Slot.Tag` for your bold FontChain. Leave blank to use the same font for both. |
 
 ### What gets custom fonts
@@ -74,7 +74,7 @@ The mod only affects your own inspector — other people's UIs are untouched.
 
 ## Installing
 
-Download `CustomFonts.dll` from [Releases](https://github.com/jukefr/ResoniteCustomFonts/releases) and put it in `Resonite/rml_mods/`. That's it.
+Download `CustomInspectorFonts.dll` from [Releases](https://github.com/jukefr/ResoniteCustomInspectorFonts/releases) and put it in `Resonite/rml_mods/`. That's it.
 
 ## Limitations
 

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <RootNamespace>CustomFonts</RootNamespace>
+    <RootNamespace>CustomInspectorFonts</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

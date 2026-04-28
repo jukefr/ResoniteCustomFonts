@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>Slot graph traversal utilities — walks parent/child/compoent hierarchies via reflection.</summary>
 public static class SlotGraphWalker

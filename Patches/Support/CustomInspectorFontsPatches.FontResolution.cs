@@ -1,10 +1,10 @@
 using System.Reflection;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         private static object? FindInspectorPanelFromSlot(object? startSlot) =>
             FontResolver.FindInspectorPanelFromSlot(startSlot);
@@ -52,7 +52,7 @@ public partial class CustomFonts
         /// </summary>
         private static void TryApplyFontToUiBuilder(object? ui, bool preferBoldChainWhenBolderStackActive = false)
         {
-            if (!CustomFonts.ActiveEnabled())
+            if (!CustomInspectorFonts.ActiveEnabled())
                 return;
             if (ui == null)
                 return;

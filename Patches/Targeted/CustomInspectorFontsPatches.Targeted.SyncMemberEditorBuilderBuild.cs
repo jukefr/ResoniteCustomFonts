@@ -2,11 +2,11 @@ using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
         private static class TargetedSyncMemberEditorBuilderBuildPatch
@@ -42,7 +42,7 @@ public partial class CustomFonts
                 __state = false;
                 try
                 {
-                    if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleSyncMemberEditorBuilder))
+                    if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleSyncMemberEditorBuilder))
                         return;
                     var world = ReadMemberValue(member, "World");
                     var slot = GetContextSlotFromUiBuilder(ui);

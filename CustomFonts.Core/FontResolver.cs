@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>Font resolution logic — finds FontChain components on avatar slots via tag matching.</summary>
 public static class FontResolver

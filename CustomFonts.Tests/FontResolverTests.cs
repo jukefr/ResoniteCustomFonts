@@ -1,7 +1,7 @@
-using CustomFonts;
+using CustomInspectorFonts;
 using Xunit;
 
-namespace CustomFonts.Tests;
+namespace CustomInspectorFonts.Tests;
 
 public class FontResolverTests
 {

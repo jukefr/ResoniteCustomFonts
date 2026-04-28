@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using Elements.Core;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
 /// CherryPick: <c>CherryPicker</c> static ctor walks <see cref="F:FrooxEngine.WorkerInitializer.ComponentLibrary"/> via a lazy
@@ -14,14 +14,14 @@ namespace CustomFonts;
 /// <see cref="InvalidOperationException"/> (“Collection was modified”) when opening Attach Component.
 /// Materializing that sequence with <see cref="Enumerable.ToList{TSource}"/> after each flatten call fixes it.
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         /// <summary>Harmony may skip the class on the first <see cref="Harmony.PatchAll"/> pass; retry is idempotent once patched.</summary>
         internal static void RetryCherryPickStaticCtorTranspilerPatch(Harmony harmony)
         {
-            if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleCherryPickCherryPickerCctorFix))
+            if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleCherryPickCherryPickerCctorFix))
                 return;
             try
             {
@@ -29,7 +29,7 @@ public partial class CustomFonts
             }
             catch (Exception ex)
             {
-                UniLog.Log("[CustomFonts] CherryPick transpiler retry: " + ex.Message, false);
+                UniLog.Log("[CustomInspectorFonts] CherryPick transpiler retry: " + ex.Message, false);
             }
         }
 
@@ -38,7 +38,7 @@ public partial class CustomFonts
         {
             private static bool Prepare()
             {
-                if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleCherryPickCherryPickerCctorFix))
+                if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleCherryPickCherryPickerCctorFix))
                     return false;
                 var cherry = AccessTools.TypeByName("CherryPick.CherryPicker");
                 if (cherry == null)

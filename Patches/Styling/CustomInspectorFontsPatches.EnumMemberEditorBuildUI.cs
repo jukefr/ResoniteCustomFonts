@@ -3,11 +3,11 @@ using System.Reflection;
 using HarmonyLib;
 using ResoniteModLoader;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         /// <summary>
         /// EnumDropdown patches <see cref="FrooxEngine.EnumMemberEditor"/>.<c>BuildUI</c> and nests extra controls; font must match
@@ -42,7 +42,7 @@ public partial class CustomFonts
             {
                 try
                 {
-                    if (!CustomFonts.PatchSiteEnabled(CustomFonts.StyleEnumMemberEditorBuildUI))
+                    if (!CustomInspectorFonts.PatchSiteEnabled(CustomInspectorFonts.StyleEnumMemberEditorBuildUI))
                         return;
                     TryApplyFontToUiBuilder(ui);
                 }

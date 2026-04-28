@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         private static IEnumerable<object> EnumerateParentSlots(object startSlot) =>
             SlotGraphWalker.EnumerateParentSlots(startSlot);

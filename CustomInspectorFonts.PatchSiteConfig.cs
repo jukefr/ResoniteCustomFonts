@@ -1,9 +1,9 @@
 using ResoniteModLoader;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>Per-area toggles in Mod Settings (only used when the mod is enabled).</summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
     /// <summary>When <see cref="Active"/> is true, whether this area's styling runs (can be toggled while playing; transpiler options need a reload).</summary>
     internal static bool PatchSiteEnabled(ModConfigurationKey<bool> siteKey) =>

@@ -1,16 +1,16 @@
 using System.Reflection;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
 /// <summary>
 /// Targeted bolder stack for remaining <see cref="FrooxEngine.RadiantUI_Constants.SetupEditorStyle"/> entry points
 /// (see SETUP_EDITOR_STYLE.md). Texture packer / unpacker wizards build UI inside async continuations after
 /// <c>OnAttach</c> returns — no stable outer sync method to patch for those two.
 /// </summary>
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
         private static class TargetedExportDialogSetupPatch
@@ -25,7 +25,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleExportDialogSetup);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleExportDialogSetup);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -45,7 +45,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleComponentSelectorSetupUi);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleComponentSelectorSetupUi);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -65,7 +65,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleComponentSelectorBuildUi);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleComponentSelectorBuildUi);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -85,7 +85,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object slot, ref bool __state) =>
-                TargetedBolderScopePrefixFromRootSlot(slot, ref __state, CustomFonts.StyleInspectorHelperSetupProxyVisual);
+                TargetedBolderScopePrefixFromRootSlot(slot, ref __state, CustomInspectorFonts.StyleInspectorHelperSetupProxyVisual);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -105,7 +105,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleDevCreateNewFormOpenCategory);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleDevCreateNewFormOpenCategory);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -125,7 +125,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleWizardFormOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleWizardFormOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -145,7 +145,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleFolderImportDialogOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleFolderImportDialogOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -165,7 +165,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object root, ref bool __state) =>
-                TargetedBolderScopePrefixFromRootSlot(root, ref __state, CustomFonts.StyleRecordEditFormOpenDialogWindow);
+                TargetedBolderScopePrefixFromRootSlot(root, ref __state, CustomInspectorFonts.StyleRecordEditFormOpenDialogWindow);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -185,7 +185,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleHostAccessDialogOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleHostAccessDialogOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -205,7 +205,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleHyperlinkOpenDialogOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleHyperlinkOpenDialogOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -225,7 +225,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleBrowserCreateDirectoryDialogOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleBrowserCreateDirectoryDialogOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -245,7 +245,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object root, ref bool __state) =>
-                TargetedBolderScopePrefixFromRootSlot(root, ref __state, CustomFonts.StyleNewWorldDialogOpenDialogWindow);
+                TargetedBolderScopePrefixFromRootSlot(root, ref __state, CustomInspectorFonts.StyleNewWorldDialogOpenDialogWindow);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -265,7 +265,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleProtoFluxNodeVisualGenerateVisual);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleProtoFluxNodeVisualGenerateVisual);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -285,7 +285,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleAssetOptimizationWizardOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleAssetOptimizationWizardOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -305,7 +305,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleAvatarCreatorOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleAvatarCreatorOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -325,7 +325,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleCubemapCreatorOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleCubemapCreatorOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -345,7 +345,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleReflectionProbeWizardOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleReflectionProbeWizardOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -365,7 +365,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleVhacdDialogOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleVhacdDialogOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -385,7 +385,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleWorldLightSourcesWizardOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleWorldLightSourcesWizardOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
@@ -405,7 +405,7 @@ public partial class CustomFonts
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleWorldTextRendererWizardOnAttach);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleWorldTextRendererWizardOnAttach);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]

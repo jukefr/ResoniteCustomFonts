@@ -1,26 +1,26 @@
 using System.Reflection;
 using HarmonyLib;
 
-namespace CustomFonts;
+namespace CustomInspectorFonts;
 
-public partial class CustomFonts
+public partial class CustomInspectorFonts
 {
-    public static partial class CustomFontsPatches
+    public static partial class CustomInspectorFontsPatches
     {
         [HarmonyPatch]
-        private static class TargetedInspectorPanelSetupPatch
+        private static class TargetedTextureRefEditorSetupPatch
         {
             private static bool Prepare() =>
-                FindDeclaredInstanceMethod(AccessTools.TypeByName("FrooxEngine.InspectorPanel"), "Setup") != null;
+                FindDeclaredInstanceMethod(AccessTools.TypeByName("FrooxEngine.TextureRefEditor"), "Setup") != null;
 
             [HarmonyTargetMethod]
             private static MethodInfo? TargetMethod() =>
-                FindDeclaredInstanceMethod(AccessTools.TypeByName("FrooxEngine.InspectorPanel"), "Setup");
+                FindDeclaredInstanceMethod(AccessTools.TypeByName("FrooxEngine.TextureRefEditor"), "Setup");
 
             [HarmonyPrefix]
             [HarmonyPriority(-10000)]
             private static void Prefix(object __instance, ref bool __state) =>
-                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomFonts.StyleInspectorPanelSetup);
+                TargetedBolderScopePrefixComponent(__instance, ref __state, CustomInspectorFonts.StyleTextureRefEditorSetup);
 
             [HarmonyPostfix]
             [HarmonyPriority(int.MaxValue)]
