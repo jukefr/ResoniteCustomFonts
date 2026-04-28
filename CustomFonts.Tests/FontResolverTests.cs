@@ -332,4 +332,11 @@ public class FontResolverTests
         public object? Parent { get; set; }
         public object? World { get; set; }
     }
+
+    [Fact]
+    public void ClearFontCache_DoesNotThrow()
+    {
+        // Should be safe to call at any time
+        FontResolver.ClearFontCache();
+    }
 }

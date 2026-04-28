@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace CustomFonts;
@@ -5,6 +6,40 @@ namespace CustomFonts;
 /// <summary>Font resolution logic — finds FontChain components on avatar slots via tag matching.</summary>
 public static class FontResolver
 {
+    // ---- Caches for commonly-resolved types ----
+
+    private static Type? _cachedUiBuilderType;
+    private static Type? _cachedWorkerInspectorType;
+    private static Type? _cachedComponentSelectorType;
+
+    internal static Type? UiBuilderType =>
+        _cachedUiBuilderType ??= ReflectionHelpers.TypeByName("FrooxEngine.UIX.UIBuilder");
+
+    private static Type? WorkerInspectorType =>
+        _cachedWorkerInspectorType ??= ReflectionHelpers.TypeByName("FrooxEngine.WorkerInspector");
+
+    private static Type? ComponentSelectorType =>
+        _cachedComponentSelectorType ??= ReflectionHelpers.TypeByName("FrooxEngine.ComponentSelector");
+
+    // ---- Font result cache ----
+    //
+    // Once we resolve a FontChain for a given (world, tag) pair, cache it so we
+    // don't walk the avatar hierarchy on every inspector UI update. The cache is
+    // keyed by object identity (world reference + tag string) since the world and
+    // its avatar hierarchy are stable during a session.
+    //
+    // WeakReference would be ideal but adds complexity; this cache is bounded by
+    // the number of worlds the local user has open (typically 1-3).
+    private static readonly ConcurrentDictionary<(object World, string Tag), object?> FontCache = new();
+
+    /// <summary>Clear the font cache — call when the avatar hierarchy changes.</summary>
+    public static void ClearFontCache()
+    {
+        FontCache.Clear();
+    }
+
+    // ---- GetContextSlotFromUiBuilder ----
+
     /// <summary>
     /// <see cref="FrooxEngine.UIX.UIBuilder"/> has <c>Root</c> and <c>Canvas</c>, not a <c>Slot</c> property — resolving context from <c>Root</c> is required for style/font patches.
     /// </summary>
@@ -35,18 +70,26 @@ public static class FontResolver
         return canvas == null ? null : ReflectionHelpers.ReadMemberValue(canvas, "Slot");
     }
 
-    private static Type? _cachedUiBuilderType;
-
-    internal static Type? UiBuilderType =>
-        _cachedUiBuilderType ??= ReflectionHelpers.TypeByName("FrooxEngine.UIX.UIBuilder");
+    // ---- Font resolution with caching ----
 
     /// <summary>Font source: first <see cref="FrooxEngine.FontChain"/> on a descendant of <see cref="FrooxEngine.User.Root"/>.<c>Slot</c> whose slot tag matches <paramref name="tag"/>.</summary>
     public static object? ResolveFontProviderForUiSlotWithTag(object slot, string tag, Func<string> fontSourceSlotTag, Func<string> boldFontSourceSlotTag)
     {
         var world = ReflectionHelpers.ReadMemberValue(slot, "World");
+        if (world == null)
+            return null;
+
+        // Check cache first
+        var cacheKey = (world, tag);
+        if (FontCache.TryGetValue(cacheKey, out var cached))
+            return cached;
+
         var avatarRoot = ResolveLocalUserAvatarRootSlot(world);
         if (avatarRoot == null)
+        {
+            FontCache[cacheKey] = null;
             return null;
+        }
 
         foreach (var s in SlotGraphWalker.EnumerateDescendantSlots(avatarRoot))
         {
@@ -57,10 +100,14 @@ public static class FontResolver
                 continue;
             var chain = SlotGraphWalker.EnumerateFontChainComponentsOnSlot(s).FirstOrDefault();
             if (chain != null)
+            {
+                FontCache[cacheKey] = chain;
                 return chain;
+            }
             continue;
         }
 
+        FontCache[cacheKey] = null;
         return null;
     }
 
@@ -213,7 +260,7 @@ public static class FontResolver
             return WorkerBelongsToThisClient(panel);
 
         // WorkerInspector (e.g. detached component window) has no _hierarchy/_components roots — still an IWorker inspector.
-        var workerInspectorType = ReflectionHelpers.TypeByName("FrooxEngine.WorkerInspector");
+        var workerInspectorType = WorkerInspectorType;
         if (workerInspectorType != null)
         {
             var wi = SlotGraphWalker.GetComponentInParents(slot, workerInspectorType);
@@ -222,7 +269,7 @@ public static class FontResolver
         }
 
         // Attach Component browser lives under ComponentSelector, not SceneInspector.
-        var componentSelectorType = ReflectionHelpers.TypeByName("FrooxEngine.ComponentSelector");
+        var componentSelectorType = ComponentSelectorType;
         if (componentSelectorType != null)
         {
             var cs = SlotGraphWalker.GetComponentInParents(slot, componentSelectorType);
