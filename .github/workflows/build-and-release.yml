@@ -30,18 +30,18 @@ jobs:
         dotnet-quality: 'preview'
 
     - name: Restore dependencies
-      run: dotnet restore CustomFonts.csproj
+      run: dotnet restore CustomInspectorFonts.csproj
 
     - name: Build
-      run: dotnet build CustomFonts.csproj --configuration Release --no-restore
+      run: dotnet build CustomInspectorFonts.csproj --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test CustomFonts.Tests --configuration Release --no-restore
+      run: dotnet test CustomInspectorFonts.Tests --configuration Release --no-restore
 
     - name: Get version from csproj
       id: get_version
       run: |
-        VERSION=$(grep -oP '<Version>\K[^<]+' CustomFonts.csproj)
+        VERSION=$(grep -oP '<Version>\K[^<]+' CustomInspectorFonts.csproj)
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"
 
@@ -49,7 +49,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ./bin/Release/net10.0/CustomFonts.dll
+          ./bin/Release/net10.0/CustomInspectorFonts.dll
         tag_name: v${{ steps.get_version.outputs.VERSION }}
         name: Release v${{ steps.get_version.outputs.VERSION }}
         body: |
@@ -65,5 +65,5 @@ jobs:
     - name: Upload build artifacts (backup)
       uses: actions/upload-artifact@v4
       with:
-        name: CustomFonts.dll
-        path: ./bin/Release/net10.0/CustomFonts.dll
+        name: CustomInspectorFonts.dll
+        path: ./bin/Release/net10.0/CustomInspectorFonts.dll

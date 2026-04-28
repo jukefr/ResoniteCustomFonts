@@ -1,0 +1,120 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>1.2.0</Version>
+		<Authors>Kayt</Authors>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AssemblyName>CustomInspectorFonts</AssemblyName>
+		<RootNamespace>CustomInspectorFonts</RootNamespace>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(ResonitePath)' == ''">
+		<ResonitePath Condition="'$(OS)' == 'Windows_NT' and Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite')">C:/Program Files (x86)/Steam/steamapps/common/Resonite</ResonitePath>
+		<ResonitePath Condition="'$(OS)' != 'Windows_NT' and Exists('$(HOME)/.steam/steam/steamapps/common/Resonite')">$(HOME)/.steam/steam/steamapps/common/Resonite</ResonitePath>
+		<ResonitePath Condition="'$(ResonitePath)' == ''">G:\SteamLibrary\steamapps\common\Resonite</ResonitePath>
+	</PropertyGroup>
+
+	<!--
+	  References
+	  - Build stubs (Elements.Core, Renderite.Host) locally into stubs/prebuilt
+	  - Use downloaded NuGet DLLs for ResoniteModLoader + HarmonyLib
+	  - Avoid ResonitePath-derived HintPaths entirely
+	-->
+	<ItemGroup>
+		<Reference Include="Elements.Core">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Elements.Core.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Renderite.Host">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Renderite.Host.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="ResoniteModLoader">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/Libraries/ResoniteModLoader.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="HarmonyLib">
+			<HintPath>$(MSBuildProjectDirectory)/stubs/prebuilt/rml_libs/0Harmony.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+
+	<!-- Build required stub assemblies into stubs/prebuilt -->
+	<Target Name="BuildStubs" BeforeTargets="PrepareForBuild">
+		<PropertyGroup>
+			<_StubOutDir>$(MSBuildProjectDirectory)/stubs/prebuilt</_StubOutDir>
+		</PropertyGroup>
+		<MakeDir Directories="$(_StubOutDir)" />
+		<MakeDir Directories="$(_StubOutDir)/Libraries" />
+		<MakeDir Directories="$(_StubOutDir)/rml_libs" />
+		<Exec Command='dotnet build "stubs/Elements.Core/Elements.Core.csproj" -c $(Configuration) -o "$(_StubOutDir)"' />
+		<Exec Command='dotnet build "stubs/Renderite.Host/Renderite.Host.csproj" -c $(Configuration) -o "$(_StubOutDir)"' />
+	</Target>
+
+	<Target Name="BootstrapOpenSourceDeps" BeforeTargets="BuildStubs">
+		<Exec Command='pwsh -NoProfile -ExecutionPolicy Bypass -File "$(MSBuildProjectDirectory)/tools/bootstrap-deps.ps1"' />
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="CustomInspectorFonts.Core/CustomInspectorFonts.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="CustomInspectorFonts.cs" />
+		<Compile Include="CustomInspectorFonts.PatchSiteConfig.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.Core.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.FontResolution.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.Reflection.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Support.SlotGraph.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SetupEditorStyle.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SceneInspectorOnChanges.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.SlotInspectorOnChanges.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.TextRenderHelperGetBolderFont.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Styling.EnumMemberEditorBuildUI.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Compatibility.CherryPickCherryPickerCctor.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.Helpers.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SceneInspectorOnAttach.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.UserInspectorOnAttach.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.UserInspectorItemRebuildUser.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.WorkerInspectorCreate.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.WorkerInspectorBuildUIForComponent.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.InspectorPanelSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.FieldEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.RefEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.TextureRefEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.DelegateEditorSetup.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.ListEditorBuildListItem.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.BagEditorBuildBagItem.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SyncMemberEditorBuilderBuild.cs" />
+		<Compile Include="CustomInspectorFonts.Patches/Targeted.SetupEditorStyleExtras.cs" />
+	</ItemGroup>
+
+	<!-- Reference / vendored mods — not part of this assembly -->
+	<ItemGroup>
+		<Compile Remove=".examples/**" />
+		<Compile Remove="decomp/**" />
+		<Compile Remove=".decomp/**" />
+		<Compile Remove="CustomInspectorFonts.Tests/**" />
+		<None Include=".examples/**" />
+		<None Include="decomp/**" />
+		<None Include=".decomp/**" />
+	</ItemGroup>
+
+	<Target Name="Copy" DependsOnTargets="Build">
+		<Message Text="Copying $(TargetFileName) to $(ResonitePath)/rml_mods" Importance="High" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ResonitePath)/rml_mods" />
+		<Message Condition="'$(Configuration)' == 'Debug'" Text="Debug build, copying $(TargetFileName) to $(ResonitePath)/rml_mods/HotReloadMods" Importance="High" />
+		<Copy Condition="'$(Configuration)' == 'Debug'" SourceFiles="$(TargetPath)" DestinationFolder="$(ResonitePath)/rml_mods/HotReloadMods" />
+		<Delete Condition="'$(Configuration)' == 'Release'" Files="$(ResonitePath)/rml_mods/HotReloadMods/$(AssemblyName).dll" />
+	</Target>
+
+</Project>
