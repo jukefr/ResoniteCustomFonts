@@ -1,10 +1,13 @@
 using Elements.Core;
 using HarmonyLib;
 using ResoniteModLoader;
+using System.Runtime.CompilerServices;
 
 #if DEBUG && RML_HOTRELOAD
 using ResoniteHotReloadLib;
 #endif
+
+[assembly: InternalsVisibleTo("CustomFonts.Tests")]
 
 namespace CustomFonts;
 
@@ -17,7 +20,7 @@ public partial class CustomFonts : ResoniteMod
     public override string Name => "CustomFonts";
     public override string Author => "Kayt";
     public override string Version => typeof(CustomFonts).Assembly.GetName().Version?.ToString() ?? "0.0.0";
-    public override string Link => "https://example.com/CustomFonts/";
+    public override string Link => "https://github.com/jukefr/ResoniteCustomFonts/";
 
     [AutoRegisterConfigKey]
     private static readonly ModConfigurationKey<bool> Active = new(
