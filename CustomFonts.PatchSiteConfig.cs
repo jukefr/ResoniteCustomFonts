@@ -5,228 +5,228 @@ namespace CustomFonts;
 /// <summary>Per-area toggles in Mod Settings (only used when the mod is enabled).</summary>
 public partial class CustomFonts
 {
-    /// <summary>When <see cref="Active"/> is true, whether this area’s styling runs (can be toggled while playing; transpiler options need a reload).</summary>
+    /// <summary>When <see cref="Active"/> is true, whether this area's styling runs (can be toggled while playing; transpiler options need a reload).</summary>
     internal static bool PatchSiteEnabled(ModConfigurationKey<bool> siteKey) =>
         ActiveEnabled() && Instance != null && _config != null && _config.GetValue(siteKey);
 
-    // --- Inspector: main window (scene / hierarchy / shell) ---
+    // --- Inspector: main window ---
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleSceneInspectorOnAttach = new(
         "styleSceneInspectorOnAttach",
-        "Inspector main: first open.",
+        "Inspector: first time you open it",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleSceneInspectorOnChanges = new(
         "styleSceneInspectorOnChanges",
-        "Inspector main: refresh / undo / hierarchy edits.",
+        "Inspector: refresh after edits",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleSlotInspectorOnChanges = new(
         "styleSlotInspectorOnChanges",
-        "Inspector main: left slot tree list.",
+        "Slot tree in inspector",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleInspectorPanelSetup = new(
         "styleInspectorPanelSetup",
-        "Inspector main: outer shell / tabs layout.",
+        "Inspector: outer shell/tabs",
         () => true);
 
-    // --- Inspector: worker (detached / worker list) ---
+    // --- Worker inspector ---
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleWorkerInspectorCreate = new(
         "styleWorkerInspectorCreate",
-        "Worker inspector: open panel.",
+        "Component panel: opening",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleWorkerInspectorBuildUIForComponent = new(
         "styleWorkerInspectorBuildUIForComponent",
-        "Worker inspector: single-component body.",
+        "Component panel: body",
         () => true);
 
-    // --- Inspector: users list ---
+    // --- Users list ---
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleUserInspectorOnAttach = new(
         "styleUserInspectorOnAttach",
-        "Users list: open floating browser.",
+        "Users list: opening",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleUserInspectorItemRebuildUser = new(
         "styleUserInspectorItemRebuildUser",
-        "Users list: row rebuild.",
+        "Users list: rows",
         () => true);
 
-    // --- Inspector: field editors ---
+    // --- Field editors ---
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleSyncMemberEditorBuilder = new(
         "styleSyncMemberEditorBuilder",
-        "Fields: SyncMemberEditorBuilder.Build (most fields).",
+        "Most typed fields",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleFieldEditorSetup = new(
         "styleFieldEditorSetup",
-        "Fields: FieldEditor.Setup.",
+        "Generic/boxed fields",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleRefEditorSetup = new(
         "styleRefEditorSetup",
-        "Fields: RefEditor.Setup.",
+        "Reference fields",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleListEditorBuildListItem = new(
         "styleListEditorBuildListItem",
-        "Fields: ListEditor row items.",
+        "List/array rows",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleTextureRefEditorSetup = new(
         "styleTextureRefEditorSetup",
-        "Fields: TextureRefEditor.Setup.",
+        "Texture reference fields",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleDelegateEditorSetup = new(
         "styleDelegateEditorSetup",
-        "Fields: DelegateEditor.Setup.",
+        "Delegate/event fields",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleBagEditorBuildBagItem = new(
         "styleBagEditorBuildBagItem",
-        "Fields: BagEditor dictionary rows.",
+        "Dictionary/bag rows",
         () => true);
 
-    // --- Developer tools, dialogs, wizards (SetupEditorStyle outer scope) ---
+    // --- Developer tools and dialogs ---
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleExportDialogSetup = new(
         "styleExportDialogSetup",
-        "Dev UI: Export dialog Setup.",
+        "Export dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleComponentSelectorSetupUi = new(
         "styleComponentSelectorSetupUi",
-        "Dev UI: Attach Component SetupUI.",
+        "Attach Component: setup",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleComponentSelectorBuildUi = new(
         "styleComponentSelectorBuildUi",
-        "Dev UI: Attach Component BuildUI.",
+        "Attach Component: list",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleInspectorHelperSetupProxyVisual = new(
         "styleInspectorHelperSetupProxyVisual",
-        "Dev UI: InspectorHelper.SetupProxyVisual.",
+        "Proxy visuals in inspector",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleDevCreateNewFormOpenCategory = new(
         "styleDevCreateNewFormOpenCategory",
-        "Dev UI: Create New OpenCategory.",
+        "Create New menu",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleWizardFormOnAttach = new(
         "styleWizardFormOnAttach",
-        "Dev UI: WizardForm OnAttach.",
+        "Wizard dialogs",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleFolderImportDialogOnAttach = new(
         "styleFolderImportDialogOnAttach",
-        "Dev UI: Folder import dialog.",
+        "Folder import dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleRecordEditFormOpenDialogWindow = new(
         "styleRecordEditFormOpenDialogWindow",
-        "Dev UI: Record edit OpenDialogWindow.",
+        "Record edit dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleHostAccessDialogOnAttach = new(
         "styleHostAccessDialogOnAttach",
-        "Dev UI: Host access dialog.",
+        "Host access dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleHyperlinkOpenDialogOnAttach = new(
         "styleHyperlinkOpenDialogOnAttach",
-        "Dev UI: Hyperlink open dialog.",
+        "Hyperlink dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleBrowserCreateDirectoryDialogOnAttach = new(
         "styleBrowserCreateDirectoryDialogOnAttach",
-        "Dev UI: Create directory dialog.",
+        "Create directory dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleNewWorldDialogOpenDialogWindow = new(
         "styleNewWorldDialogOpenDialogWindow",
-        "Dev UI: New world OpenDialogWindow.",
+        "New world dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleProtoFluxNodeVisualGenerateVisual = new(
         "styleProtoFluxNodeVisualGenerateVisual",
-        "Dev UI: ProtoFlux node GenerateVisual.",
+        "ProtoFlux node visuals",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleAssetOptimizationWizardOnAttach = new(
         "styleAssetOptimizationWizardOnAttach",
-        "Dev UI: Asset optimization wizard.",
+        "Asset optimization wizard",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleAvatarCreatorOnAttach = new(
         "styleAvatarCreatorOnAttach",
-        "Dev UI: Avatar creator wizard.",
+        "Avatar creator wizard",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleCubemapCreatorOnAttach = new(
         "styleCubemapCreatorOnAttach",
-        "Dev UI: Cubemap creator wizard.",
+        "Cubemap creator wizard",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleReflectionProbeWizardOnAttach = new(
         "styleReflectionProbeWizardOnAttach",
-        "Dev UI: Reflection probe wizard.",
+        "Reflection probe wizard",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleVhacdDialogOnAttach = new(
         "styleVhacdDialogOnAttach",
-        "Dev UI: V-HACD dialog.",
+        "V-HACD dialog",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleWorldLightSourcesWizardOnAttach = new(
         "styleWorldLightSourcesWizardOnAttach",
-        "Dev UI: World light sources wizard.",
+        "Light sources wizard",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleWorldTextRendererWizardOnAttach = new(
         "styleWorldTextRendererWizardOnAttach",
-        "Dev UI: World text renderer wizard.",
+        "Text renderer wizard",
         () => true);
 
     // --- Global font pipeline ---
@@ -234,19 +234,19 @@ public partial class CustomFonts
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleRadiantUiSetupEditorStyle = new(
         "styleRadiantUiSetupEditorStyle",
-        "Global: RadiantUI SetupEditorStyle postfix.",
+        "Global: main UI styling pass",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleTextRenderHelperGetBolderFont = new(
         "styleTextRenderHelperGetBolderFont",
-        "Global: TextRenderHelper.GetBolderFont postfix.",
+        "Global: bold font swapping",
         () => true);
 
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleEnumMemberEditorBuildUI = new(
         "styleEnumMemberEditorBuildUI",
-        "Global: EnumMemberEditor.BuildUI postfix.",
+        "Global: enum dropdowns",
         () => true);
 
     // --- Other mods ---
@@ -254,6 +254,6 @@ public partial class CustomFonts
     [AutoRegisterConfigKey]
     internal static readonly ModConfigurationKey<bool> StyleCherryPickCherryPickerCctorFix = new(
         "styleCherryPickCherryPickerCctorFix",
-        "CherryPick: Attach Component static-ctor transpiler.",
+        "CherryPick Attach Component fix",
         () => true);
 }
