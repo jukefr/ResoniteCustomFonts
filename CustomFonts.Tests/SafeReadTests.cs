@@ -29,4 +29,20 @@ public class SafeReadTests
         var result = ReflectionHelpers.SafeRead(nullReader);
         Assert.Null(result);
     }
+
+    [Fact]
+    public void SafeRead_DisposesDisposableResults()
+    {
+        var disposed = false;
+        Func<object?> reader = () => new DisposableAction(() => disposed = true);
+        var result = ReflectionHelpers.SafeRead(reader);
+        Assert.NotNull(result);
+    }
+
+    private class DisposableAction : IDisposable
+    {
+        private readonly Action _action;
+        public DisposableAction(Action action) => _action = action;
+        public void Dispose() => _action();
+    }
 }

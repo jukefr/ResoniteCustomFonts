@@ -310,4 +310,29 @@ public class ReflectionHelperTests
         var result = ReflectionHelpers.TryGetPropertyValueAcrossInheritance(obj, "NonExistent");
         Assert.Null(result);
     }
+
+    // ---- TypeByName ----
+
+    [Fact]
+    public void TypeByName_FindsLoadedType()
+    {
+        var result = ReflectionHelpers.TypeByName("System.String");
+        Assert.NotNull(result);
+        Assert.Equal(typeof(string), result);
+    }
+
+    [Fact]
+    public void TypeByName_ReturnsNull_ForNonExistentType()
+    {
+        var result = ReflectionHelpers.TypeByName("Some.NonExistent.Type");
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void TypeByName_FindsTypeInThisAssembly()
+    {
+        var result = ReflectionHelpers.TypeByName("CustomFonts.ReflectionHelpers");
+        Assert.NotNull(result);
+        Assert.Equal(typeof(ReflectionHelpers), result);
+    }
 }
