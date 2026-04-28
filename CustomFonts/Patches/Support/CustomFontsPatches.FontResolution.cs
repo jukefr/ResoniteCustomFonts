@@ -23,12 +23,19 @@ public partial class CustomFonts
 				{
 					if (comp == null)
 						continue;
-					var ct = comp.GetType();
-					if (ct.GetField("_hierarchyContentRoot", flags) == null)
+					try
+					{
+						var ct = comp.GetType();
+						if (ct.GetField("_hierarchyContentRoot", flags) == null)
+							continue;
+						if (ct.GetField("_componentsContentRoot", flags) == null)
+							continue;
+						return comp;
+					}
+					catch
+					{
 						continue;
-					if (ct.GetField("_componentsContentRoot", flags) == null)
-						continue;
-					return comp;
+					}
 				}
 			}
 

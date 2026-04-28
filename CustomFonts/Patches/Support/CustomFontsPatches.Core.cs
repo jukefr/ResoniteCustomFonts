@@ -143,9 +143,16 @@ public partial class CustomFonts
 				return null;
 			for (var t = target.GetType(); t != null; t = t.BaseType)
 			{
-				var p = t.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-				if (p != null && p.GetIndexParameters().Length == 0)
-					return SafeRead(() => p.GetValue(target));
+				try
+				{
+					var p = t.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+					if (p != null && p.GetIndexParameters().Length == 0)
+						return SafeRead(() => p.GetValue(target));
+				}
+				catch
+				{
+					continue;
+				}
 			}
 
 			return null;

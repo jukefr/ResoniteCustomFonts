@@ -50,8 +50,10 @@ public partial class CustomFonts
 			return preferred ?? fallback;
 		}
 
-		private static object? ReadMemberValue(object instance, string name)
+		private static object? ReadMemberValue(object? instance, string name)
 		{
+			if (instance == null)
+				return null;
 			var type = instance.GetType();
 			var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
@@ -66,8 +68,10 @@ public partial class CustomFonts
 			return null;
 		}
 
-		private static bool TrySetMemberValue(object instance, string name, object? value)
+		private static bool TrySetMemberValue(object? instance, string name, object? value)
 		{
+			if (instance == null)
+				return false;
 			var type = instance.GetType();
 			var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
