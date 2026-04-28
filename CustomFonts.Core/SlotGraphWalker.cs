@@ -320,7 +320,10 @@ public static class SlotGraphWalker
         }
 
         if (list is not IEnumerable enumerable)
+        {
+            // Don't log here — let the caller handle the empty case
             yield break;
+        }
         foreach (var item in enumerable)
         {
             if (item != null)

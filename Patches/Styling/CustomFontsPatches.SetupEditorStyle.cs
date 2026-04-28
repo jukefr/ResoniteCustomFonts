@@ -10,6 +10,44 @@ public partial class CustomFonts
     public static partial class CustomFontsPatches
     {
         /// <summary>
+        /// Set custom font early — before any elements are created — so that titles and other
+        /// pre-<c>SetupEditorStyle</c> elements (like the title in <c>RadiantUI_Panel.SetupPanel</c>)
+        /// use our font from the start. Runs as a postfix on <c>SetupDefaultStyle</c> which is
+        /// called at the top of every panel setup, before any UI elements are laid out.
+        /// </summary>
+        [HarmonyPatch]
+        private static class SetupDefaultStylePatch
+        {
+            [HarmonyTargetMethod]
+            private static MethodInfo? TargetMethod()
+            {
+                var t = AccessTools.TypeByName("FrooxEngine.RadiantUI_Constants");
+                var uiBuilder = UiBuilderType;
+                if (t == null || uiBuilder == null)
+                    return null;
+                return AccessTools.Method(t, "SetupDefaultStyle", new[] { uiBuilder, typeof(bool) })
+                    ?? AccessTools.Method(t, "SetupDefaultStyle", new[] { uiBuilder });
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPriority(int.MaxValue)]
+            private static void Postfix(object ui)
+            {
+                try
+                {
+                    if (!CustomFonts.ActiveEnabled())
+                        return;
+                    // Set font early — no bolder stack active here, so use primary font
+                    TryApplyFontToUiBuilder(ui, preferBoldChainWhenBolderStackActive: false);
+                }
+                catch (Exception ex)
+                {
+                    Warn($"SetupDefaultStyle postfix: {ex.GetType().Name}: {ex.Message}");
+                }
+            }
+        }
+
+        /// <summary>
         /// Editor UI sets style font here; postfix sets <c>Style.Font</c> from the inspector root chain when available.
         /// </summary>
         [HarmonyPatch]
